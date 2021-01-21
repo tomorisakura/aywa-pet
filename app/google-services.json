@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "302899124395",
+    "project_id": "aywa-pet",
+    "storage_bucket": "aywa-pet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:302899124395:android:abc29a87bc7cbc95b0bfee",
+        "android_client_info": {
+          "package_name": "com.grevi.aywapet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "302899124395-3reimm6lcherr19q1nnhkmdcroo91lh0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.grevi.aywapet",
+            "certificate_hash": "15c765d6fd919794b0b0656280b9c61cff17b693"
+          }
+        },
+        {
+          "client_id": "302899124395-jbu4k84ruj9mlahu8nfs5sqd0e4fbacd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA0_6iI509fqQsbcfHnmiG1yUvraiQTHI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "302899124395-jbu4k84ruj9mlahu8nfs5sqd0e4fbacd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

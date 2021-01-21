@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Aywa Pet</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="intro_one_text">Aywa Pet merupakan aplikasi adopsi hewan yang dikembangkan oleh klinik hewan Aywa 😘</string>
+    <string name="intro_two_text">Temukan hewan peliharaan yang membutuhkan adopsi 🐈</string>
+    <string name="intro_three_text">Rawat dan bermain bersama ❤</string>
+    <string name="next_text">Berikutnya</string>
+    <string name="finish_text">Ok,Siap Saya Mengerti</string>
+    <string name="title_home">Beranda</string>
+    <string name="title_keep">Keep</string>
+    <string name="title_account">Akun</string>
+    <string name="title_login">Login</string>
+    <string name="category_text">Kategori Hewan</string>
+    <string name="detail_text">Detail Hewan</string>
+
+    <string name="terms1">Pecinta Hewan</string>
+    <string name="terms2">Lokasi Calon Adopter Di Daerah Jogja</string>
+    <string name="terms3">Memberikan Waktu Bermain Bersama Dengan Kucing</string>
+    <string name="terms4">Tidak Boleh Diperjual Belikan</string>
+    <string name="regist_text">Registrasi Akun</string>
+</resources>

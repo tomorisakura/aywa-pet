@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/intro_navigation"
+    app:startDestination="@id/splashFragment">
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.grevi.aywapet.ui.splash.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash" >
+        <action
+            android:id="@+id/action_splashFragment_to_introViewPagerFragment"
+            app:destination="@id/introViewPagerFragment"
+            app:popUpTo="@id/intro_navigation"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/introViewPagerFragment"
+        android:name="com.grevi.aywapet.ui.intro.viewpager.IntroViewPagerFragment"
+        android:label="fragment_intro_view_pager"
+        tools:layout="@layout/fragment_intro_view_pager" />
+</navigation>
