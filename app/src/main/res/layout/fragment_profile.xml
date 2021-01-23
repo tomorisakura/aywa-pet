@@ -95,13 +95,24 @@
         app:layout_constraintTop_toTopOf="@+id/guideline6" />
 
     <TextView
+        android:id="@+id/textView9"
+        style="@style/textSplash"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Keep Selesai"
-        style="@style/textSplash"
         android:layout_margin="10dp"
+        android:text="Keep Selesai"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_list_keep_status"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

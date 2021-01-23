@@ -36,4 +36,12 @@ class RemoteRepos @Inject constructor(private val apiHelperImpl: ApiHelperImpl) 
         return apiResponse { apiHelperImpl.postKeep(idPet, idUser) }
     }
 
+    suspend fun getKeepSuccess(idUser: String) : Resource<GetKeepSuccessResponse> {
+        return apiResponse { apiHelperImpl.getKeepSuccess(idUser) }
+    }
+
+    suspend fun getPetByType(idType : String) : Resource<PetResponse> {
+        return apiResponse { apiHelperImpl.getPetByType(idType) }
+    }
+
 }

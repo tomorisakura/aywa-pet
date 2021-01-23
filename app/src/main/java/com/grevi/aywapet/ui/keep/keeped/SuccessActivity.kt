@@ -4,9 +4,10 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.grevi.aywapet.databinding.ActivitySuccessBinding
+import com.grevi.aywapet.ui.base.BaseActivity
 import com.grevi.aywapet.ui.home.HomeActivity
 
-class SuccessActivity : AppCompatActivity() {
+class SuccessActivity : BaseActivity() {
 
     private lateinit var binding : ActivitySuccessBinding
 

@@ -5,29 +5,25 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.ActivityKeepedBinding
+import com.grevi.aywapet.ui.base.BaseActivity
 import com.grevi.aywapet.ui.viewmodel.MainViewModel
 import com.grevi.aywapet.utils.Constant.ARG_TIMER
 import com.grevi.aywapet.utils.Constant.BASE_URL
-import com.grevi.aywapet.utils.Constant.TIMER_WORKER_TAG
 import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.SharedUtils
 import com.grevi.aywapet.utils.snackBar
 import com.grevi.aywapet.worker.TimerWorker
-import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class KeepedActivity : AppCompatActivity() {
+class KeepedActivity : BaseActivity() {
 
     private lateinit var binding : ActivityKeepedBinding
     private val mainViewModel : MainViewModel by viewModels()

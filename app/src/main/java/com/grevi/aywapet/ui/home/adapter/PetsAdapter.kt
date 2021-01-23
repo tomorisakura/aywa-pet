@@ -7,12 +7,12 @@ import com.bumptech.glide.Glide
 import com.grevi.aywapet.databinding.ListPetBinding
 import com.grevi.aywapet.model.Pets
 import com.grevi.aywapet.utils.Constant.BASE_URL
-import com.grevi.aywapet.utils.TouchHelper
 
 class PetsAdapter : RecyclerView.Adapter<PetsAdapter.PetsVH>() {
 
     private val petsList : MutableList<Pets> = ArrayList()
-    private var touchHelper : TouchHelper? = null
+
+    var itemClickHelper : ((Pets) -> Unit)? = null
 
     inner class PetsVH(private val binding : ListPetBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(pets: Pets) {
@@ -25,10 +25,6 @@ class PetsAdapter : RecyclerView.Adapter<PetsAdapter.PetsVH>() {
                 Glide.with(this.root).load("$BASE_URL/${pets.pictures[0].picUrl}").into(petsPic)
             }
         }
-    }
-
-    internal fun onItemClick(listener : TouchHelper) {
-        this.touchHelper = listener
     }
 
     internal fun addItem(list: List<Pets>) {
@@ -44,7 +40,7 @@ class PetsAdapter : RecyclerView.Adapter<PetsAdapter.PetsVH>() {
 
     override fun onBindViewHolder(holder: PetsVH, position: Int) {
         holder.bind(petsList[position])
-        holder.itemView.setOnClickListener { touchHelper?.onClickItem(petsList[position]) }
+        holder.itemView.setOnClickListener { itemClickHelper?.invoke(petsList[position]) }
     }
 
     override fun getItemCount(): Int {

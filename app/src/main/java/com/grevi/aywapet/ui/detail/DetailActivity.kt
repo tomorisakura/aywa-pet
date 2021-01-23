@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.grevi.aywapet.databinding.ActivityDetailBinding
+import com.grevi.aywapet.ui.base.BaseActivity
 import com.grevi.aywapet.ui.detail.adapter.PicturesAdapter
 import com.grevi.aywapet.ui.keep.keeped.KeepedActivity
 import com.grevi.aywapet.ui.viewmodel.MainViewModel
@@ -15,8 +16,7 @@ import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : BaseActivity() {
 
     private lateinit var binding : ActivityDetailBinding
     private val mainViewModel : MainViewModel by viewModels()

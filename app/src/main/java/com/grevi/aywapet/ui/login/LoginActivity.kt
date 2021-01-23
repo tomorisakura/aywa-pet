@@ -1,21 +1,17 @@
 package com.grevi.aywapet.ui.login
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.ActivityLoginBinding
-import com.grevi.aywapet.ui.keep.keeped.SuccessActivity
+import com.grevi.aywapet.ui.base.BaseActivity
 import com.grevi.aywapet.utils.SharedUtils
-import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-@AndroidEntryPoint
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : BaseActivity() {
 
     private lateinit var binding : ActivityLoginBinding
 

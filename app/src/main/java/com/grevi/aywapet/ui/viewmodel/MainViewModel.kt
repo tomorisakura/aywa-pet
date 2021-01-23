@@ -25,6 +25,7 @@ class MainViewModel @ViewModelInject constructor(private val remoteRepos: Remote
 
     private val _keepDataResp = MutableLiveData<Resource<GetKeepResponse>>()
     private val _keepPostData = MutableLiveData<Resource<KeepPostResponse>>()
+    private val _keepSuccessData = MutableLiveData<Resource<GetKeepSuccessResponse>>()
 
     private lateinit var countDownTimer: CountDownTimer
     private val initialCountDown : Long = 86400000 //24hours
@@ -46,11 +47,43 @@ class MainViewModel @ViewModelInject constructor(private val remoteRepos: Remote
     val keepData : MutableLiveData<Resource<GetKeepResponse>>
     get() = _keepDataResp
 
+    val keepSuccessData : MutableLiveData<Resource<GetKeepSuccessResponse>> = _keepSuccessData
+
     init {
         getAllPet()
         getAnimal()
         getUserTable()
         getKeepPet()
+        getKeepSuccessKeep()
+    }
+
+    internal fun getPetByType(idType : String) : LiveData<Resource<PetResponse>> {
+        viewModelScope.launch {
+            val data = remoteRepos.getPetByType(idType)
+            _petData.postValue(Resource.loading(msg = "Memuat data..."))
+            try {
+                data.data?.let { _petData.postValue(Resource.success(data = it)) }
+            } catch (e : Exception) {
+                e.printStackTrace()
+                _petData.postValue(Resource.error(msg = e.toString()))
+            }
+        }
+        return _petData
+    }
+
+    private fun getKeepSuccessKeep() : LiveData<Resource<GetKeepSuccessResponse>> {
+        viewModelScope.launch {
+            val id = localRepos.getUser()[0].id
+            val data = remoteRepos.getKeepSuccess(id)
+
+            _keepSuccessData.postValue(Resource.loading(msg = "Load"))
+            try {
+                _keepSuccessData.postValue(Resource.success(data = data.data!!))
+            } catch (e : Exception) {
+                _keepSuccessData.postValue(Resource.error(msg = e.toString()))
+            }
+        }
+        return _keepSuccessData
     }
 
     internal fun keepPostData(idPet : String) : LiveData<Resource<KeepPostResponse>> {

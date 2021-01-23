@@ -1,21 +1,16 @@
 package com.grevi.aywapet.ui.home
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.ActivityHomeBinding
-import com.grevi.aywapet.ui.login.LoginActivity
-import dagger.hilt.android.AndroidEntryPoint
+import com.grevi.aywapet.ui.base.BaseActivity
 
-@AndroidEntryPoint
-class HomeActivity : AppCompatActivity(){
+class HomeActivity : BaseActivity(){
 
     private lateinit var binding : ActivityHomeBinding
     private val TAG = HomeActivity::class.java.simpleName

@@ -29,3 +29,10 @@ data class UserKeep(
         @SerializedName("email") val email : String,
         @SerializedName("alamat") val address : String,
 )
+
+data class KeepSuccess(
+        @SerializedName("_id") val id : String,
+        @SerializedName("pet_id") val petId : Pet,
+        @SerializedName("users_id") val userId : String,
+        @SerializedName("status_keep") val status : String
+)

@@ -34,4 +34,10 @@ interface ApiService {
 
     @GET("/api/keep/find/{id}")
     suspend fun getKeepPet(@Path("id") idUser : String) : Response<GetKeepResponse>
+    
+    @GET("/api/keep/success/user/{id}")
+    suspend fun getSuccessKeep(@Path("id") idUser : String) : Response<GetKeepSuccessResponse>
+
+    @GET("/api/pet/get-type")
+    suspend fun getPetByType(@Query("id") idType : String) : Response<PetResponse>
 }

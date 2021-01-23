@@ -10,9 +10,12 @@ class TypesAdapter : RecyclerView.Adapter<TypesAdapter.TypesVH>() {
 
     private val listTypes : MutableList<Animal> = ArrayList()
 
+    var typeItemClicked : ((Animal) -> Unit)? = null
+
     inner class TypesVH(private val binding : ListTypeAnimalBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(animal: Animal) {
             binding.typeName.text = animal.jenis
+            binding.typeName.setOnClickListener { typeItemClicked?.invoke(animal) }
         }
     }
 

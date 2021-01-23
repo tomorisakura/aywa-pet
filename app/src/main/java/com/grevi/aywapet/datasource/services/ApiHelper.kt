@@ -11,4 +11,6 @@ interface ApiHelper {
     suspend fun createUser(name : String, phone : String, password : String, alamat : String, email : String, uid : String) : Response<PostUserResponse>
     suspend fun getKeepPet(idUser : String) : Response<GetKeepResponse>
     suspend fun postKeep(idPet : String, idUser: String) : Response<KeepPostResponse>
+    suspend fun getKeepSuccess(idUser: String) : Response<GetKeepSuccessResponse>
+    suspend fun getPetByType(idType : String) : Response<PetResponse>
 }

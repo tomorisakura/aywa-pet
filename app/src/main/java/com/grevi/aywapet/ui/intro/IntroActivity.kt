@@ -1,14 +1,12 @@
 package com.grevi.aywapet.ui.intro
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.navigation.fragment.NavHostFragment
 import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.ActivityIntroBinding
-import dagger.hilt.android.AndroidEntryPoint
+import com.grevi.aywapet.ui.base.BaseActivity
 
-@AndroidEntryPoint
-class IntroActivity : AppCompatActivity() {
+class IntroActivity : BaseActivity() {
 
     private lateinit var binding : ActivityIntroBinding
 
