@@ -25,4 +25,12 @@ class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : Ap
         return apiService.createUser(name, phone, password, alamat, email, uid)
     }
 
+    override suspend fun getKeepPet(idUser: String): Response<GetKeepResponse> {
+        return apiService.getKeepPet(idUser)
+    }
+
+    override suspend fun postKeep(idPet: String, idUser: String): Response<KeepPostResponse> {
+        return apiService.postKeep(idPet, idUser)
+    }
+
 }

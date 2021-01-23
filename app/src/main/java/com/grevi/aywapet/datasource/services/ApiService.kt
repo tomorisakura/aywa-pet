@@ -29,6 +29,9 @@ interface ApiService {
                            @Field("password") password : String,
                            @Field("alamat") alamat : String,
                            @Field("email") email: String,
-                           @Field("uid") uid : String) : Response<PostUserResponse>
+                           @Field("uid") uid : String
+    ) : Response<PostUserResponse>
 
+    @GET("/api/keep/find/{id}")
+    suspend fun getKeepPet(@Path("id") idUser : String) : Response<GetKeepResponse>
 }

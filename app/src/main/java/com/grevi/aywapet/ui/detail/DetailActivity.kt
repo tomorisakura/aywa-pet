@@ -1,16 +1,12 @@
 package com.grevi.aywapet.ui.detail
 
-import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import androidx.activity.viewModels
-import androidx.fragment.app.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.grevi.aywapet.databinding.ActivityDetailBinding
 import com.grevi.aywapet.ui.detail.adapter.PicturesAdapter
 import com.grevi.aywapet.ui.keep.keeped.KeepedActivity
@@ -78,11 +74,7 @@ class DetailActivity : AppCompatActivity() {
                             indicator.attachToRecyclerView(rvPhotos, pagerSnapHelper)
 
                             btnAdopt.setOnClickListener {
-                                //snackBar(root, "Miaww... flufy ${pet.petName} 😘").show()
-                                Intent(this@DetailActivity, KeepedActivity::class.java).apply {
-                                    putExtra("petId", pet.id)
-                                    startActivity(this)
-                                }
+                                observeChecker(pet.id)
                             }
                         }
                     }
@@ -90,6 +82,28 @@ class DetailActivity : AppCompatActivity() {
             }
         })
 
+    }
+
+    private fun observeChecker(pet : String) {
+        mainViewModel.keepData.observe(this, {
+            when(it.status) {
+                Resource.STATUS.LOADING -> snackBar(binding.root, it.msg!!).show()
+                Resource.STATUS.ERROR -> snackBar(binding.root, it.msg!!).show()
+                Resource.STATUS.EXCEPTION -> snackBar(binding.root, it.msg!!).show()
+                Resource.STATUS.SUCCESS -> {
+                    it.data?.result.let { state ->
+                        if (state.isNullOrEmpty()) {
+                            Intent(this@DetailActivity, KeepedActivity::class.java).apply {
+                                putExtra("petId", pet)
+                                startActivity(this)
+                            }
+                        } else{
+                            snackBar(binding.root, "Selesaikan terlebih dahulu keep kamu").show()
+                        }
+                    }
+                }
+            }
+        })
     }
 
     override fun onResume() {

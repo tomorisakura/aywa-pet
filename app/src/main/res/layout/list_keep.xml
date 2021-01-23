@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/materialCardView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/pet_pic"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="matrix"
+            android:src="@drawable/ic_image_placeholder" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/pet_name"
+        style="@style/textSplash"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/materialCardView7"
+        app:layout_constraintTop_toTopOf="@+id/materialCardView7"
+        tools:text="Juggernaut" />
+
+    <TextView
+        android:id="@+id/pet_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        style="@style/text_rv_info_blue"
+        app:layout_constraintStart_toEndOf="@+id/materialCardView7"
+        app:layout_constraintTop_toBottomOf="@+id/pet_name"
+        tools:text="Kucing" />
+
+    <TextView
+        android:id="@+id/gender_pet"
+        style="@style/text_rv_info_green"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/pet_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/pet_type"
+        app:layout_constraintTop_toTopOf="@+id/pet_type"
+        tools:text="Himalayan" />
+
+    <TextView
+        android:id="@+id/timer"
+        style="@style/text_info_head"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="end"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/materialCardView7"
+        app:layout_constraintTop_toBottomOf="@+id/pet_type"
+        tools:text="Dikeep oleh : xxkyoko" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/blue_sky_200"
+        app:layout_constraintTop_toBottomOf="@+id/materialCardView7" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

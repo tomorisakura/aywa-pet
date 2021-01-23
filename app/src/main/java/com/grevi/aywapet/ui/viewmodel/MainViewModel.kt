@@ -1,25 +1,20 @@
 package com.grevi.aywapet.ui.viewmodel
 
 import android.os.CountDownTimer
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.grevi.aywapet.datasource.response.AnimalResponse
-import com.grevi.aywapet.datasource.response.PetDetailResponse
-import com.grevi.aywapet.datasource.response.PetResponse
-import com.grevi.aywapet.datasource.response.VerifyResponse
+import com.grevi.aywapet.datasource.response.*
 import com.grevi.aywapet.db.entity.Users
 import com.grevi.aywapet.repository.LocalRepos
 import com.grevi.aywapet.repository.RemoteRepos
 import com.grevi.aywapet.utils.Resource
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.util.*
+import java.lang.Exception
 
 class MainViewModel @ViewModelInject constructor(private val remoteRepos: RemoteRepos, private val localRepos: LocalRepos) : ViewModel() {
     private val _petData = MutableLiveData<Resource<PetResponse>>()
@@ -27,6 +22,9 @@ class MainViewModel @ViewModelInject constructor(private val remoteRepos: Remote
     private val _petDetailData = MutableLiveData<Resource<PetDetailResponse>>()
     private val _emailData = MutableLiveData<Resource<VerifyResponse>>()
     private val _userTableData = MutableLiveData<MutableList<Users>>()
+
+    private val _keepDataResp = MutableLiveData<Resource<GetKeepResponse>>()
+    private val _keepPostData = MutableLiveData<Resource<KeepPostResponse>>()
 
     private lateinit var countDownTimer: CountDownTimer
     private val initialCountDown : Long = 86400000 //24hours
@@ -45,10 +43,28 @@ class MainViewModel @ViewModelInject constructor(private val remoteRepos: Remote
     val userTable : MutableLiveData<MutableList<Users>>
     get() = _userTableData
 
+    val keepData : MutableLiveData<Resource<GetKeepResponse>>
+    get() = _keepDataResp
+
     init {
         getAllPet()
         getAnimal()
         getUserTable()
+        getKeepPet()
+    }
+
+    internal fun keepPostData(idPet : String) : LiveData<Resource<KeepPostResponse>> {
+        viewModelScope.launch {
+            val users = localRepos.getUser()
+            val data = remoteRepos.keepPost(idPet, users[0].id)
+            _keepPostData.postValue(Resource.loading(msg = "Load"))
+            try {
+                _keepPostData.postValue(Resource.success(data = data.data!!))
+            } catch (e : Exception) {
+                _keepPostData.postValue(Resource.error(msg = e.toString()))
+            }
+        }
+        return _keepPostData
     }
 
     internal fun insertUser(id : String, username : String, email : String, name : String, uid : String, token : String) {
@@ -69,6 +85,20 @@ class MainViewModel @ViewModelInject constructor(private val remoteRepos: Remote
             }
         }
         return _userTableData
+    }
+
+    private fun getKeepPet() : LiveData<Resource<GetKeepResponse>> {
+        viewModelScope.launch {
+            val id = localRepos.getUser()
+            val data = remoteRepos.getKeepPet(id[0].id)
+            _keepDataResp.postValue(Resource.loading(msg = "Load"))
+            try {
+                _keepDataResp.postValue(Resource.success(data = data.data!!))
+            } catch (e : Exception) {
+                _keepDataResp.postValue(Resource.error(msg = e.toString()))
+            }
+        }
+        return _keepDataResp
     }
 
     internal fun getEmailVerify(email : String) : LiveData<Resource<VerifyResponse>> {
