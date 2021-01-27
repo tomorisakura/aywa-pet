@@ -6,16 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.grevi.aywapet.datasource.response.VerifyResponse
-import com.grevi.aywapet.db.entity.Users
-import com.grevi.aywapet.repository.LocalRepos
 import com.grevi.aywapet.repository.RemoteRepos
 import com.grevi.aywapet.utils.RegisHelper
 import com.grevi.aywapet.utils.Resource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.Exception
 
-class RegisViewModel @ViewModelInject constructor(private val remoteRepos: RemoteRepos, private val localRepos: LocalRepos) : ViewModel() {
+class RegisViewModel @ViewModelInject constructor(private val remoteRepos: RemoteRepos) : ViewModel() {
     var name = MutableLiveData<String>()
 
     var phone = MutableLiveData<String>()
@@ -73,13 +70,5 @@ class RegisViewModel @ViewModelInject constructor(private val remoteRepos: Remot
             }
         }
         return _emailData
-    }
-
-    internal fun insertUser(id : String, username : String, email : String, name : String, uid : String, token : String) {
-        viewModelScope.launch {
-            delay(1000L)
-            val user = Users(id, username, email, name, uid, token)
-            localRepos.insertUser(user)
-        }
     }
 }

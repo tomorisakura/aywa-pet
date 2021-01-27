@@ -126,7 +126,8 @@ class LoginFragment : Fragment() {
                             response.data.result.let { users ->
                                 val token = response.data.token
                                 sharedUtils.setUserKey(users.email)
-                                mainViewModel.insertUser(users.id, users.username, users.email, users.name, users.uid, token)
+                                sharedUtils.setUniqueKey(users.id)
+                                //mainViewModel.insertUser(users.id, users.username, users.email, users.name, users.uid, token)
                             }
                             Intent(requireActivity(), HomeActivity::class.java).apply {
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

@@ -3,44 +3,66 @@ package com.grevi.aywapet.repository
 import com.grevi.aywapet.datasource.ApiResponse
 import com.grevi.aywapet.datasource.response.*
 import com.grevi.aywapet.datasource.services.ApiHelperImpl
+import com.grevi.aywapet.db.DatabaseHelperImpl
+import com.grevi.aywapet.repository.mapper.EntityMapperImpl
 import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.SharedUtils
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class RemoteRepos @Inject constructor(private val apiHelperImpl: ApiHelperImpl) : ApiResponse() {
+class RemoteRepos @Inject constructor(private val apiHelperImpl: ApiHelperImpl,private val databaseHelperImpl: DatabaseHelperImpl,
+                                      private val mapperImpl : EntityMapperImpl, private val sharedUtils: SharedUtils) : Repository, ApiResponse() {
 
-    suspend fun getAllPet() : Resource<PetResponse> {
+    override suspend fun getAllPet() : Resource<PetResponse> {
         return apiResponse { apiHelperImpl.getPet() }
     }
 
-    suspend fun getAnimal() : Resource<AnimalResponse> {
+    override suspend fun getAnimal() : Resource<AnimalResponse> {
         return apiResponse { apiHelperImpl.getAnimal() }
     }
 
-    suspend fun getPet(id : String) : Resource<PetDetailResponse> {
+    override suspend fun getPet(id : String) : Resource<PetDetailResponse> {
         return apiResponse { apiHelperImpl.getPet(id) }
     }
 
-    suspend fun getEmailVerify(email : String) : Resource<VerifyResponse> {
-        return apiResponse { apiHelperImpl.getEmailVerify(email) }
+    override suspend fun getEmailVerify(email : String) : Resource<VerifyResponse> {
+        return apiResponse { apiHelperImpl.getEmailVerify(email).also {
+            val data = it.body()?.result ?: return@also
+            mapperImpl.mapToEntity(data, "jwt-token").let { data ->
+                sharedUtils.setUniqueKey(data.id)
+                databaseHelperImpl.insertUser(data)
+            }
+        } }
     }
 
-    suspend fun createUser(name: String, phone: String, password: String, alamat: String, email: String, uid: String) : Resource<PostUserResponse> {
-        return apiResponse { apiHelperImpl.createUser(name, phone, password, alamat, email, uid) }
+    override suspend fun createUser(name: String, phone: String, password: String, alamat: String, email: String, uid: String) : Resource<PostUserResponse> {
+        return apiResponse { apiHelperImpl.createUser(name, phone, password, alamat, email, uid).also {
+            val data = it.body()?.result ?: return@also
+            mapperImpl.mapToEntity(data, "jwt-token").let { data ->
+                sharedUtils.setUniqueKey(data.id)
+                databaseHelperImpl.insertUser(data)
+            }
+        } }
     }
 
-    suspend fun getKeepPet(idUser : String) : Resource<GetKeepResponse> {
-        return apiResponse { apiHelperImpl.getKeepPet(idUser) }
+    override suspend fun getKeepPet() : Resource<GetKeepResponse> {
+        delay(1000L)
+        val id = sharedUtils.getUniqueKey() ?: "null"
+        return apiResponse { apiHelperImpl.getKeepPet(id) }
     }
 
-    suspend fun keepPost(idPet : String, idUser: String) : Resource<KeepPostResponse> {
-        return apiResponse { apiHelperImpl.postKeep(idPet, idUser) }
+    override suspend fun keepPost(idPet : String) : Resource<KeepPostResponse> {
+        val id = sharedUtils.getUniqueKey() ?: "null"
+        return apiResponse { apiHelperImpl.postKeep(idPet, id) }
     }
 
-    suspend fun getKeepSuccess(idUser: String) : Resource<GetKeepSuccessResponse> {
-        return apiResponse { apiHelperImpl.getKeepSuccess(idUser) }
+    override suspend fun getKeepSuccess() : Resource<GetKeepSuccessResponse> {
+        delay(1000L)
+        val id = sharedUtils.getUniqueKey() ?: "null"
+        return apiResponse { apiHelperImpl.getKeepSuccess(id) }
     }
 
-    suspend fun getPetByType(idType : String) : Resource<PetResponse> {
+    override suspend fun getPetByType(idType : String) : Resource<PetResponse> {
         return apiResponse { apiHelperImpl.getPetByType(idType) }
     }
 

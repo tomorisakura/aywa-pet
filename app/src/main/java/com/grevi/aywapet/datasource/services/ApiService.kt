@@ -13,7 +13,7 @@ interface ApiService {
     suspend fun getAnimal() : Response<AnimalResponse>
 
     @GET("/api/pet/get-pet/{id}")
-    suspend fun getPetId(@Path("id") id : String) : Response<PetDetailResponse>
+    suspend fun getPetId(@Path("id") idPet : String) : Response<PetDetailResponse>
 
     @FormUrlEncoded
     @POST("/api/keep/post")

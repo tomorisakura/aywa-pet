@@ -1,10 +1,14 @@
 package com.grevi.aywapet.di
 
 import android.content.Context
+import androidx.work.WorkManager
 import com.grevi.aywapet.datasource.services.ApiHelper
 import com.grevi.aywapet.datasource.services.ApiHelperImpl
 import com.grevi.aywapet.datasource.services.ApiService
+import com.grevi.aywapet.db.DatabaseHelperImpl
 import com.grevi.aywapet.repository.RemoteRepos
+import com.grevi.aywapet.repository.Repository
+import com.grevi.aywapet.repository.mapper.EntityMapperImpl
 import com.grevi.aywapet.utils.Constant
 import com.grevi.aywapet.utils.SharedUtils
 import dagger.Module
@@ -58,8 +62,8 @@ object Module {
 
     @Provides
     @Singleton
-    fun provideRemoteRepos(apiHelperImpl: ApiHelperImpl) : RemoteRepos {
-        return RemoteRepos(apiHelperImpl)
+    fun provideRepository(remoteRepos: RemoteRepos) : Repository {
+        return remoteRepos
     }
 
     @Provides
@@ -67,4 +71,8 @@ object Module {
     fun provideSharedUtils(@ApplicationContext context: Context) : SharedUtils {
         return SharedUtils(context)
     }
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context) : WorkManager = WorkManager.getInstance(context)
 }

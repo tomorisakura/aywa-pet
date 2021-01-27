@@ -55,7 +55,6 @@ class RegisFragment : Fragment(), RegisHelper {
                 Resource.STATUS.SUCCESS -> {
                     response.data?.result?.let {
                         val token = response.data.token
-                        regisViewModel.insertUser(it.id, it.username, it.email, it.name, it.uid, token)
                     }
                     Intent(activity, HomeActivity::class.java).apply {
                         startActivity(this)

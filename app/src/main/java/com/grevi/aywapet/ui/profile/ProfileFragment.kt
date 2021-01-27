@@ -11,8 +11,10 @@ import com.grevi.aywapet.databinding.FragmentProfileBinding
 import com.grevi.aywapet.ui.profile.adapter.KeepSuccessAdapter
 import com.grevi.aywapet.ui.viewmodel.MainViewModel
 import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.SharedUtils
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
@@ -20,6 +22,8 @@ class ProfileFragment : Fragment() {
     private lateinit var binding : FragmentProfileBinding
     private val mainViewModel : MainViewModel by viewModels()
     private lateinit var keepSuccessAdapter: KeepSuccessAdapter
+
+    @Inject lateinit var sharedUtils: SharedUtils
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,10 +40,20 @@ class ProfileFragment : Fragment() {
     }
 
     private fun initView() {
-        mainViewModel.userTable.observe(viewLifecycleOwner, {
-            with(binding) {
-                tvUsername.text = it[0].username
-                tvEmail.text = it[0].email
+        val id = sharedUtils.getUserShared()
+        mainViewModel.getEmailVerify(id!!).observe(viewLifecycleOwner, { resp ->
+            when(resp.status) {
+                Resource.STATUS.LOADING -> snackBar(binding.root, resp.msg!!).show()
+                Resource.STATUS.EXCEPTION -> snackBar(binding.root, resp.msg!!).show()
+                Resource.STATUS.ERROR -> snackBar(binding.root, resp.msg!!).show()
+                Resource.STATUS.SUCCESS -> {
+                    resp.data?.result?.let {
+                        with(binding) {
+                            tvUsername.text = it.username
+                            tvEmail.text = it.email
+                        }
+                    }
+                }
             }
         })
 

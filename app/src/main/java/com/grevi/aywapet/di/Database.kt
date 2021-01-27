@@ -6,7 +6,6 @@ import com.grevi.aywapet.db.AppDatabase
 import com.grevi.aywapet.db.DatabaseDAO
 import com.grevi.aywapet.db.DatabaseHelper
 import com.grevi.aywapet.db.DatabaseHelperImpl
-import com.grevi.aywapet.repository.LocalRepos
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,11 +36,4 @@ object Database {
     fun provideDatabaseHelper(databaseHelperImpl: DatabaseHelperImpl) : DatabaseHelper {
         return databaseHelperImpl
     }
-
-    @Provides
-    @Singleton
-    fun provideLocalRepos(databaseHelperImpl: DatabaseHelperImpl) : LocalRepos {
-        return LocalRepos(databaseHelperImpl)
-    }
-
 }

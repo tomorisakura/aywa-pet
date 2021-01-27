@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import androidx.activity.viewModels
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -16,6 +17,7 @@ import com.grevi.aywapet.ui.base.BaseActivity
 import com.grevi.aywapet.ui.viewmodel.MainViewModel
 import com.grevi.aywapet.utils.Constant.ARG_TIMER
 import com.grevi.aywapet.utils.Constant.BASE_URL
+import com.grevi.aywapet.utils.Constant.TIMER_KEY
 import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.SharedUtils
 import com.grevi.aywapet.utils.snackBar
@@ -29,6 +31,8 @@ class KeepedActivity : BaseActivity() {
     private val mainViewModel : MainViewModel by viewModels()
 
     private var cbState : Boolean = false
+
+    private val TAG = KeepedActivity::class.java.simpleName
 
     @Inject lateinit var sharedUtils: SharedUtils
 
@@ -82,10 +86,39 @@ class KeepedActivity : BaseActivity() {
             binding.listTerms.adapter = termAdapter
         }
 
-        mainViewModel.timeCount.observe(this, {
-            it?.let {
-                //binding.timer.text = it
-                setWorker(it)
+        mainViewModel.outputWorkInfo.observe(this, { workInfoList ->
+            workInfoList.forEach { workInfo ->
+                when(workInfo.state) {
+                    WorkInfo.State.RUNNING -> {
+                        val workInfoValue = workInfo.progress.getString(TIMER_KEY)
+                        Log.d("$TAG RUNNING", workInfoValue.toString())
+                    }
+
+                    WorkInfo.State.CANCELLED -> {
+                        val workInfoValue = workInfo.progress.getString(TIMER_KEY)
+                        Log.d("$TAG CANCELED", workInfoValue.toString())
+                    }
+
+                    WorkInfo.State.BLOCKED -> {
+                        val workInfoValue = workInfo.progress.getString(TIMER_KEY)
+                        Log.d("$TAG BLOCKED", workInfoValue.toString())
+                    }
+
+                    WorkInfo.State.ENQUEUED -> {
+                        val workInfoValue = workInfo.progress.getString(TIMER_KEY)
+                        Log.d("$TAG ENQUEUED", workInfoValue.toString())
+                    }
+
+                    WorkInfo.State.FAILED -> {
+                        val workInfoValue = workInfo.progress.getString(TIMER_KEY)
+                        Log.d("$TAG FAILED", workInfoValue.toString())
+                    }
+
+                    WorkInfo.State.SUCCEEDED -> {
+                        val workInfoValue = workInfo.progress.getString(TIMER_KEY)
+                        Log.d("$TAG SUCCEEDED", workInfoValue.toString())
+                    }
+                }
             }
         })
 
@@ -97,26 +130,6 @@ class KeepedActivity : BaseActivity() {
                 snackBar(binding.root, "Anda Belum Menyetujui Terms & Condition").show()
             }
         }
-    }
-
-    private fun setWorker(value : String) {
-        val data = Data.Builder()
-        data.putString("Time", value)
-        val timeWorker = OneTimeWorkRequest.from(TimerWorker::class.java)
-        val wm = WorkManager.getInstance(this@KeepedActivity)
-        wm.getWorkInfoByIdLiveData(timeWorker.id)
-                .observe(this) {
-                    if (it != null) {
-                        val output = it.progress.getInt(ARG_TIMER, 0)
-                        Log.d("WORK_INFO", output.toString())
-                        //binding.timer.text = output.toString()
-                    } else {
-                        Log.d("WORK_INFO", "output null")
-                    }
-                }
-
-        wm.enqueue(timeWorker)
-
     }
 
     private fun materialDialog( msg : String, id : String) : MaterialAlertDialogBuilder {
