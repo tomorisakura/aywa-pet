@@ -44,16 +44,10 @@ class TimerWorker @WorkerInject constructor(@Assisted appContext : Context, @Ass
             val minutes = inputData.getLong(MINUTES_KEY, 0L)
             val hour = inputData.getLong(HOUR_KEY, 0)
 
-            val stringFormat = String.format(Locale.getDefault(), "%02d:%02d:%02d", hour, minutes, seconds)
+            val stringFormat = String.format(Locale.getDefault(), "%02d:%02d", hour, minutes)
             setProgressAsync(workDataOf(TIMER_KEY to stringFormat))
             println("Running on do while ... $stringFormat")
             sharedUtils.setCtShared(stringFormat)
-
-//            for (i in 0 until data) {
-//                setProgressAsync(workDataOf(TIMER_KEY to i))
-//                println(i)
-//                delay(2000L)
-//            }
             Result.success()
         } catch (e : InterruptedException) {
             e.printStackTrace()
