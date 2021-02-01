@@ -2,6 +2,7 @@ package com.grevi.aywapet.ui.home
 
 import android.content.Intent
 import android.os.Bundle
+import android.transition.Visibility
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,11 +52,27 @@ class HomeFragment : Fragment() {
 
         mainViewModel.animalData.observe(viewLifecycleOwner, { response ->
             when(response.status) {
-                Resource.STATUS.LOADING -> response.msg?.let { snackBar(binding.root, it).show() }
-                Resource.STATUS.ERROR -> response.msg?.let { snackBar(binding.root, it).show() }
-                Resource.STATUS.EXCEPTION -> response.msg?.let { snackBar(binding.root, it).show() }
+                Resource.STATUS.LOADING -> {
+                    binding.shimmer.visibility = View.VISIBLE
+                    binding.shimmer.startShimmer()
+                    binding.itemViewGroup.visibility = View.GONE
+                }
+                Resource.STATUS.ERROR -> {
+                    response.msg?.let { snackBar(binding.root, it).show() }
+                    binding.shimmer.visibility = View.VISIBLE
+                    binding.shimmer.startShimmer()
+                    binding.itemViewGroup.visibility = View.GONE
+                }
+                Resource.STATUS.EXCEPTION -> {
+                    response.msg?.let { snackBar(binding.root, it).show() }
+                    binding.shimmer.visibility = View.VISIBLE
+                    binding.shimmer.startShimmer()
+                    binding.itemViewGroup.visibility = View.GONE
+                }
                 Resource.STATUS.SUCCESS -> {
                     with(binding) {
+                        shimmer.visibility = View.GONE
+                        itemViewGroup.visibility = View.VISIBLE
                         rvListTypes.setHasFixedSize(true)
                         rvListTypes.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                         rvListTypes.adapter = typesAdapter
@@ -73,11 +90,27 @@ class HomeFragment : Fragment() {
 
         mainViewModel.petData.observe(viewLifecycleOwner, { response ->
             when(response.status) {
-                Resource.STATUS.LOADING -> response.msg?.let { snackBar(binding.root, it).show() }
-                Resource.STATUS.ERROR -> response.msg?.let { snackBar(binding.root, it).show() }
-                Resource.STATUS.EXCEPTION -> response.msg?.let { snackBar(binding.root, it).show() }
+                Resource.STATUS.LOADING -> {
+                    binding.shimmer.visibility = View.VISIBLE
+                    binding.shimmer.startShimmer()
+                    binding.itemViewGroup.visibility = View.GONE
+                }
+                Resource.STATUS.ERROR -> {
+                    response.msg?.let { snackBar(binding.root, it).show() }
+                    binding.shimmer.visibility = View.VISIBLE
+                    binding.shimmer.startShimmer()
+                    binding.itemViewGroup.visibility = View.GONE
+                }
+                Resource.STATUS.EXCEPTION -> {
+                    response.msg?.let { snackBar(binding.root, it).show() }
+                    binding.shimmer.visibility = View.VISIBLE
+                    binding.shimmer.startShimmer()
+                    binding.itemViewGroup.visibility = View.GONE
+                }
                 Resource.STATUS.SUCCESS -> {
                     with(binding) {
+                        shimmer.visibility = View.GONE
+                        itemViewGroup.visibility = View.VISIBLE
                         rvItemPet.setHasFixedSize(true)
                         rvItemPet.layoutManager = GridLayoutManager(requireContext(), 2)
                         rvItemPet.adapter = petsAdapter
@@ -93,6 +126,16 @@ class HomeFragment : Fragment() {
                 }
             }
         })
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.shimmer.startShimmer()
+    }
+
+    override fun onPause() {
+        binding.shimmer.stopShimmer()
+        super.onPause()
     }
 
 }
