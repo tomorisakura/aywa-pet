@@ -4,6 +4,8 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +24,7 @@ import com.grevi.aywapet.ui.login.LoginActivity
 import com.grevi.aywapet.utils.Constant
 import com.grevi.aywapet.utils.SharedUtils
 import com.grevi.aywapet.utils.snackBar
+import com.permissionx.guolindev.PermissionX
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -45,7 +48,6 @@ class IntroViewPagerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        storageHandler()
     }
 
     private fun initView() {
@@ -65,11 +67,7 @@ class IntroViewPagerFragment : Fragment() {
                         2 -> {
                             btnIntro.text = getString(R.string.finish_text)
                             btnIntro.setOnClickListener {
-                                sharedUtils.setIntroShared()
-                                Intent(activity, LoginActivity::class.java).apply {
-                                    startActivity(this)
-                                    activity?.finish()
-                                }
+                                storageHandler()
                             }
                         }
                         else -> {
@@ -85,19 +83,25 @@ class IntroViewPagerFragment : Fragment() {
     }
 
     private fun storageHandler() {
-        if (ContextCompat.checkSelfPermission(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                snackBar(binding.root, "Tidak boleh akses memori 😒")
-            } else {
-                ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        Constant.MY_PERMISSIONS_WRITE_EXTERNAL_STORAGE
-                )
-                Log.v("STORAGE_PERMISSION", "FAIL")
+        PermissionX.init(activity)
+            .permissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            .onExplainRequestReason { scope, deniedList, _ ->
+                scope.showRequestReasonDialog(deniedList, "Sebelum memakai aplikasi Aywa Pet anda harus menyetujui permission berikut", "OK", "Cancel")
             }
-        } else {
-            binding.btnIntro.isEnabled = true
-            snackBar(binding.root, "Permision diterima").show()
-        }
+            .request { allGranted, grantedList, deniedList ->
+                if (allGranted) {
+                    sharedUtils.setIntroShared()
+                    Intent(activity, LoginActivity::class.java).apply {
+                        startActivity(this)
+                        activity?.finish()
+                    }
+                } else {
+                    snackBar(binding.root, "Permission Deny").show()
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        activity?.finish()
+                    }, 1000L)
+                }
+            }
     }
 
 }

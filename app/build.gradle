@@ -140,4 +140,7 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:26.3.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-messaging-ktx'
+
+    //permissionX
+    implementation 'com.permissionx.guolindev:permissionx:1.4.0'
 }

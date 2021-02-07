@@ -5,16 +5,16 @@ import retrofit2.Response
 import javax.inject.Inject
 
 class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : ApiHelper {
-    override suspend fun getPet(): Response<PetResponse> {
-        return apiService.getPet()
+    override suspend fun getPet(token : String): Response<PetResponse> {
+        return apiService.getPet(token)
     }
 
-    override suspend fun getPet(id: String): Response<PetDetailResponse> {
-        return apiService.getPetId(id)
+    override suspend fun getPetDetail(token : String, id: String): Response<PetDetailResponse> {
+        return apiService.getPetId(token, id)
     }
 
-    override suspend fun getAnimal(): Response<AnimalResponse> {
-        return apiService.getAnimal()
+    override suspend fun getAnimal(token : String): Response<AnimalResponse> {
+        return apiService.getAnimal(token)
     }
 
     override suspend fun getEmailVerify(email: String): Response<VerifyResponse> {
@@ -25,20 +25,20 @@ class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : Ap
         return apiService.createUser(name, phone, password, alamat, email, uid)
     }
 
-    override suspend fun getKeepPet(idUser: String): Response<GetKeepResponse> {
-        return apiService.getKeepPet(idUser)
+    override suspend fun getKeepPet(token : String, idUser: String): Response<GetKeepResponse> {
+        return apiService.getKeepPet(token, idUser)
     }
 
-    override suspend fun postKeep(idPet: String, idUser: String): Response<KeepPostResponse> {
-        return apiService.postKeep(idPet, idUser)
+    override suspend fun postKeep(token : String, idPet: String, idUser: String): Response<KeepPostResponse> {
+        return apiService.postKeep(token, idPet, idUser)
     }
 
-    override suspend fun getKeepSuccess(idUser: String): Response<GetKeepSuccessResponse> {
-        return apiService.getSuccessKeep(idUser)
+    override suspend fun getKeepSuccess(token : String, idUser: String): Response<GetKeepSuccessResponse> {
+        return apiService.getSuccessKeep(token, idUser)
     }
 
-    override suspend fun getPetByType(idType: String): Response<PetResponse> {
-        return apiService.getPetByType(idType)
+    override suspend fun getPetByType(token : String, idType: String): Response<PetResponse> {
+        return apiService.getPetByType(token, idType)
     }
 
 }

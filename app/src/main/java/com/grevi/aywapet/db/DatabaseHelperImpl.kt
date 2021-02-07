@@ -1,6 +1,8 @@
 package com.grevi.aywapet.db
 
 import com.grevi.aywapet.db.entity.Users
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class DatabaseHelperImpl @Inject constructor(private val databaseDAO: DatabaseDAO) : DatabaseHelper {
@@ -8,8 +10,8 @@ class DatabaseHelperImpl @Inject constructor(private val databaseDAO: DatabaseDA
         databaseDAO.insertUsers(users)
     }
 
-    override suspend fun getUser(): MutableList<Users> {
-        return databaseDAO.getUsers()
+    override suspend fun getUser(): Flow<MutableList<Users>> = flow {
+        emit(databaseDAO.getUsers())
     }
 
     override suspend fun deleteUser(email: String) {

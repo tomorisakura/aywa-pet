@@ -1,19 +1,23 @@
 package com.grevi.aywapet.ui.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.grevi.aywapet.databinding.FragmentProfileBinding
 import com.grevi.aywapet.ui.profile.adapter.KeepSuccessAdapter
 import com.grevi.aywapet.ui.viewmodel.MainViewModel
 import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.SharedUtils
+import com.grevi.aywapet.utils.State
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -22,8 +26,9 @@ class ProfileFragment : Fragment() {
     private lateinit var binding : FragmentProfileBinding
     private val mainViewModel : MainViewModel by viewModels()
     private lateinit var keepSuccessAdapter: KeepSuccessAdapter
-
     @Inject lateinit var sharedUtils: SharedUtils
+
+    private val TAG = ProfileFragment::class.java.simpleName
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,22 +45,21 @@ class ProfileFragment : Fragment() {
     }
 
     private fun initView() {
-        val id = sharedUtils.getUserShared()
-        mainViewModel.getEmailVerify(id!!).observe(viewLifecycleOwner, { resp ->
-            when(resp.status) {
-                Resource.STATUS.LOADING -> snackBar(binding.root, resp.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(binding.root, resp.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(binding.root, resp.msg!!).show()
-                Resource.STATUS.SUCCESS -> {
-                    resp.data?.result?.let {
-                        with(binding) {
-                            tvUsername.text = it.username
-                            tvEmail.text = it.email
+        lifecycleScope.launchWhenCreated {
+            mainViewModel.getUserLocalFlow.collect { state ->
+                when(state) {
+                    is State.Loading -> snackBar(binding.root, state.msg).show()
+                    is State.Error -> Log.e(TAG, state.exception.toString())
+                    is State.Success -> {
+                        state.data.forEach { users ->
+                            binding.tvUsername.text = users.username
+                            binding.tvEmail.text = users.email
                         }
                     }
+                    else -> Unit
                 }
             }
-        })
+        }
 
         mainViewModel.keepSuccessData.observe(viewLifecycleOwner, { resp ->
             when(resp.status) {

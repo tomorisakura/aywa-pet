@@ -7,17 +7,17 @@ import retrofit2.http.*
 interface ApiService {
 
     @GET("/api/pet/get")
-    suspend fun getPet() : Response<PetResponse>
+    suspend fun getPet(@Header("x-access-token") token : String) : Response<PetResponse>
 
     @GET("/api/types/get")
-    suspend fun getAnimal() : Response<AnimalResponse>
+    suspend fun getAnimal(@Header("x-access-token") token : String) : Response<AnimalResponse>
 
     @GET("/api/pet/get-pet/{id}")
-    suspend fun getPetId(@Path("id") idPet : String) : Response<PetDetailResponse>
+    suspend fun getPetId(@Header("x-access-token") token : String, @Path("id") idPet : String) : Response<PetDetailResponse>
 
     @FormUrlEncoded
     @POST("/api/keep/post")
-    suspend fun postKeep(@Field("pet_id") petId : String, @Field("users_id") usersId : String) : Response<KeepPostResponse>
+    suspend fun postKeep(@Header("x-access-token") token : String, @Field("pet_id") petId : String, @Field("users_id") usersId : String) : Response<KeepPostResponse>
 
     @GET("/api/users/auth/verify")
     suspend fun getEmailVerify(@Query("email") email : String) : Response<VerifyResponse>
@@ -33,11 +33,11 @@ interface ApiService {
     ) : Response<PostUserResponse>
 
     @GET("/api/keep/find/{id}")
-    suspend fun getKeepPet(@Path("id") idUser : String) : Response<GetKeepResponse>
+    suspend fun getKeepPet(@Header("x-access-token") token : String, @Path("id") idUser : String) : Response<GetKeepResponse>
     
     @GET("/api/keep/success/user/{id}")
-    suspend fun getSuccessKeep(@Path("id") idUser : String) : Response<GetKeepSuccessResponse>
+    suspend fun getSuccessKeep(@Header("x-access-token") token : String, @Path("id") idUser : String) : Response<GetKeepSuccessResponse>
 
     @GET("/api/pet/get-type")
-    suspend fun getPetByType(@Query("id") idType : String) : Response<PetResponse>
+    suspend fun getPetByType(@Header("x-access-token") token : String, @Query("id") idType : String) : Response<PetResponse>
 }
