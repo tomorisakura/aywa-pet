@@ -1,7 +1,7 @@
 package com.grevi.aywapet.utils
 
 object Constant {
-    const val BASE_URL = "http://aywaservice.top"
+    const val BASE_URL = "http://192.168.1.100:3000"
     const val RC_SIGN = 1
 
     @JvmField val VERBOSE_NOTIFICATION_CHANNEL_NAME: CharSequence = "Verbose Notifications"
