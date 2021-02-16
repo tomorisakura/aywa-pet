@@ -12,7 +12,7 @@ import com.grevi.aywapet.utils.Constant.BASE_URL
 class KeepAdapter : RecyclerView.Adapter<KeepAdapter.KeepVH>() {
 
     private val keepList : MutableList<Keep> = ArrayList()
-    private var sharedTimer : String? = null
+    internal var onItemClick : ((keep : Keep) -> Unit)? = null
 
     inner class KeepVH(private val binding : ListKeepBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(keep: Keep) {
@@ -20,14 +20,12 @@ class KeepAdapter : RecyclerView.Adapter<KeepAdapter.KeepVH>() {
                 petName.text = keep.petId.petName
                 petType.text = keep.petId.ras
                 genderPet.text = keep.petId.gender
-                timer.text = sharedTimer
                 Glide.with(this.root).load("$BASE_URL/${keep.petId.pictures[0].picUrl}").placeholder(R.drawable.ic_image_placeholder).into(petPic)
             }
         }
     }
 
-    internal fun addItem(item : List<Keep>, time : String) {
-        sharedTimer = time
+    internal fun addItem(item : List<Keep>) {
         keepList.clear()
         keepList.addAll(item)
         notifyDataSetChanged()
@@ -40,6 +38,7 @@ class KeepAdapter : RecyclerView.Adapter<KeepAdapter.KeepVH>() {
 
     override fun onBindViewHolder(holder: KeepAdapter.KeepVH, position: Int) {
         holder.bind(keepList[position])
+        holder.itemView.setOnClickListener { onItemClick?.invoke(keepList[position]) }
     }
 
     override fun getItemCount(): Int = keepList.size

@@ -1,29 +1,20 @@
 package com.grevi.aywapet.ui.viewmodel
 
-import android.os.CountDownTimer
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.*
 import com.grevi.aywapet.datasource.response.*
 import com.grevi.aywapet.db.entity.Users
 import com.grevi.aywapet.repository.RemoteRepos
-import com.grevi.aywapet.utils.Constant.HOUR_KEY
-import com.grevi.aywapet.utils.Constant.MINUTES_KEY
-import com.grevi.aywapet.utils.Constant.SECONDS_KEY
-import com.grevi.aywapet.utils.Constant.TIMER_KEY
-import com.grevi.aywapet.utils.Constant.TIMER_WORKER_TAG
 import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.State
-import com.grevi.aywapet.worker.TimerWorker
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.*
 
-class MainViewModel @ViewModelInject constructor(private val remoteRepos: RemoteRepos, private val workManager: WorkManager) : ViewModel() {
+class MainViewModel @ViewModelInject constructor(private val remoteRepos: RemoteRepos) : ViewModel() {
     private val _petData = MutableLiveData<Resource<PetResponse>>()
     private val _animalData = MutableLiveData<Resource<AnimalResponse>>()
     private val _petDetailData = MutableLiveData<Resource<PetDetailResponse>>()
@@ -34,17 +25,10 @@ class MainViewModel @ViewModelInject constructor(private val remoteRepos: Remote
     private val _keepSuccessData = MutableLiveData<Resource<GetKeepSuccessResponse>>()
     private val _usersLocalFlow = MutableStateFlow<State<MutableList<Users>>>(State.Data)
 
-    private lateinit var countDownTimer: CountDownTimer
-    private val initialCountDown : Long = 86400000 //24hours
-    private val countDownInterval : Long = 1000
-    private val _timeCount : MutableLiveData<String> = MutableLiveData()
-
     val petData : MutableLiveData<Resource<PetResponse>> get() = _petData
     val animalData : MutableLiveData<Resource<AnimalResponse>> get() = _animalData
-    val timeCount : MutableLiveData<String> get() = _timeCount
     val keepData : MutableLiveData<Resource<GetKeepResponse>> = _keepDataResp
     val keepSuccessData : MutableLiveData<Resource<GetKeepSuccessResponse>> = _keepSuccessData
-    val outputWorkInfo : LiveData<List<WorkInfo>>
     val getUserLocalFlow : MutableStateFlow<State<MutableList<Users>>> get() = _usersLocalFlow
 
 
@@ -54,7 +38,6 @@ class MainViewModel @ViewModelInject constructor(private val remoteRepos: Remote
         getKeepPet()
         getKeepSuccessKeep()
         getLocalUser()
-        outputWorkInfo = workManager.getWorkInfosByTagLiveData(TIMER_WORKER_TAG)
     }
 
     private fun getLocalUser() {
@@ -187,48 +170,5 @@ class MainViewModel @ViewModelInject constructor(private val remoteRepos: Remote
             }
         }
         return _petDetailData
-    }
-
-    fun setWorker() {
-        val data = Data.Builder().let {
-            it.putInt(TIMER_KEY, 100)
-            it.build()
-        }
-
-        val timerWorker = OneTimeWorkRequestBuilder<TimerWorker>()
-                .addTag(TIMER_WORKER_TAG)
-                .setInputData(data)
-                .build()
-
-        workManager.enqueue(timerWorker)
-    }
-
-    fun setTimer() {
-        countDownTimer = object : CountDownTimer(initialCountDown, countDownInterval) {
-            override fun onTick(millisUntilFinished: Long) {
-                val hours = ((millisUntilFinished / (1000 * 60 * 60)) % 60)
-                val minutes = (millisUntilFinished / (1000 * 60) % 60)
-                val seconds = (millisUntilFinished / 1000) % 60
-                val formatTime = String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds)
-
-                val data = Data.Builder().let {
-                    it.putLong(SECONDS_KEY, seconds)
-                    it.putLong(MINUTES_KEY, minutes)
-                    it.putLong(HOUR_KEY, hours)
-                    it.build()
-                }
-
-                val timerWorker = OneTimeWorkRequestBuilder<TimerWorker>()
-                        .addTag(TIMER_WORKER_TAG)
-                        .setInputData(data)
-                        .build()
-                workManager.enqueue(timerWorker)
-            }
-
-            override fun onFinish() {
-
-            }
-
-        }.start()
     }
 }

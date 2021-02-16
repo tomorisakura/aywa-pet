@@ -63,26 +63,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:gravity="end"
-        android:text="Batas Waktu Pengambilan"
+        android:gravity="start"
+        android:text="Lihat Batas Waktu Pengambilan"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/materialCardView7"
         app:layout_constraintTop_toBottomOf="@+id/gender_pet"
         app:layout_constraintVertical_bias="0.0" />
-
-    <TextView
-        android:id="@+id/timer"
-        style="@style/text_info_head"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:gravity="end"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView10"
-        app:layout_constraintVertical_bias="0.0"
-        tools:text="-23:32" />
 
     <View
         android:id="@+id/view"

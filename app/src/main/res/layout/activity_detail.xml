@@ -20,20 +20,24 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:contentScrim="?android:attr/windowBackground">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_photos"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:orientation="vertical">
 
-            <me.relex.circleindicator.CircleIndicator2
-                android:id="@+id/indicator"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                app:ci_drawable="@drawable/dark_indicator"
-                android:layout_gravity="bottom"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_photos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+                <me.relex.circleindicator.CircleIndicator2
+                    android:id="@+id/indicator"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    app:ci_drawable="@drawable/dark_indicator"
+                    android:layout_gravity="bottom"/>
+
+            </LinearLayout>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -50,6 +54,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -57,47 +62,38 @@
             android:layout_height="wrap_content"
             android:paddingBottom="10dp">
 
-            <TextView
-                android:id="@+id/textView14"
-                style="@style/text_head_default"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                android:text="Pemilik Lama"
+            <ProgressBar
+                android:id="@+id/pg_loading"
+                android:layout_width="0dp"
+                android:layout_height="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/owner_pet"
-                style="@style/textSplash"
-                android:layout_width="0dp"
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/groupView"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="20dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/textView14"
-                tools:text="Mamang Grevi" />
-
-            <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@color/blue_sky_200"
-                app:layout_constraintTop_toBottomOf="@+id/owner_pet" />
+                app:constraint_referenced_ids=" textView16, view1,
+                 materialCardView, materialCardView2,
+                 materialCardView3, materialCardView4,
+                 materialCardView5, materialCardView6,
+                 tv_biaya, tv_address_clinic,
+                 tv_free, tv_clinic_name,
+                 tv_info_text, tv_info" />
 
             <TextView
                 android:id="@+id/tv_biaya"
+                style="@style/text_head_default"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginStart="20dp"
-                style="@style/text_head_default"
                 android:text="Biaya Perawatan"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/tv_free"
@@ -116,11 +112,11 @@
                 style="@style/textSplash"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="20dp"
-                android:layout_marginTop="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline3"
-                app:layout_constraintTop_toBottomOf="@+id/view"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:text="Klinik Hewan Aywa" />
 
             <TextView
@@ -151,7 +147,7 @@
                 android:layout_marginEnd="411dp"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintGuide_percent="0.4"
+                app:layout_constraintGuide_percent="0.2"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <View
@@ -480,12 +476,45 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <View
+                android:id="@+id/view2"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="20dp"
+                android:background="@color/blue_25"
+                app:layout_constraintTop_toBottomOf="@+id/materialCardView6" />
+
+            <TextView
+                android:id="@+id/tv_info_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Informasi Tambahan"
+                android:layout_margin="20dp"
+                style="@style/text_head_default"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+            <TextView
+                android:id="@+id/tv_info"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                tools:text="Kucing lucu suka makan biskuit dan tuna apalagi klo sama whiskas"
+                android:layout_margin="20dp"
+                style="@style/text_information"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_info_text" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/btn_adopt"
+        app:layout_behavior="com.google.android.material.behavior.HideBottomViewOnScrollBehavior"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"

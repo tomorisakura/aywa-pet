@@ -2,6 +2,7 @@ package com.grevi.aywapet.ui.detail
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,13 +30,7 @@ class DetailActivity : BaseActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         initView()
-    }
-
-    override fun onSupportNavigateUp(): Boolean {
-        onBackPressed()
-        return true
     }
 
     private fun initView() {
@@ -47,17 +42,18 @@ class DetailActivity : BaseActivity() {
 
         mainViewModel.getPet(id).observe(this, { response ->
             when(response.status) {
-                Resource.STATUS.LOADING -> snackBar(binding.root, response.msg!!).show()
+                Resource.STATUS.LOADING -> binding.pgLoading.visibility = View.VISIBLE
                 Resource.STATUS.EXCEPTION -> snackBar(binding.root, response.msg!!).show()
                 Resource.STATUS.ERROR -> snackBar(binding.root, response.msg!!).show()
                 Resource.STATUS.SUCCESS -> {
 
                     response.data?.result?.let { pet ->
                         with(binding) {
+                            pgLoading.visibility = View.GONE
+                            groupView.visibility = View.VISIBLE
                             supportActionBar?.title = pet.petName
-                            supportActionBar?.subtitle = pet.ras
+                            supportActionBar?.subtitle = "Owner Lama ${pet.oldOwner}"
                             picturesAdapter.addItem(pet.pictures)
-                            ownerPet.text = pet.oldOwner
                             tvClinicName.text = pet.clinicId.name
                             tvAddressClinic.text = pet.clinicId.address
                             vaccinePet.text = pet.vaccine
@@ -66,6 +62,7 @@ class DetailActivity : BaseActivity() {
                             weightPet.text = pet.weight
                             rasPet.text = pet.ras
                             agePet.text = pet.age
+                            tvInfo.text = pet.info
 
                             rvPhotos.setHasFixedSize(true)
                             rvPhotos.layoutManager = LinearLayoutManager(this@DetailActivity, LinearLayoutManager.HORIZONTAL, false)

@@ -28,6 +28,8 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".service.TimerService"/>
+
         <service android:name=".utils.fb.FirebaseMessaging"
             android:exported="false">
             <intent-filter>

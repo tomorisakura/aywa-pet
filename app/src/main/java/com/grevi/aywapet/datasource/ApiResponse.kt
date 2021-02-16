@@ -1,9 +1,7 @@
 package com.grevi.aywapet.datasource
 
 import com.grevi.aywapet.utils.Resource
-import com.grevi.aywapet.utils.ResponseException
 import retrofit2.Response
-import java.lang.Exception
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException

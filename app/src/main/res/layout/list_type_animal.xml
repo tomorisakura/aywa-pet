@@ -9,7 +9,6 @@
         android:id="@+id/type_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:chipIcon="@drawable/ic_twotone_arrow_right_24"
         style="@style/text_rv_info_blue"
         tools:text="Kucing"/>
 

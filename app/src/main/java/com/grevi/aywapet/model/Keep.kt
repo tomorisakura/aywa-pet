@@ -19,7 +19,8 @@ data class Pet(
         @SerializedName("berat_peliharaan") val weight : String,
         @SerializedName("ras_peliharaan") val ras : String,
         @SerializedName("umur_peliharaan") val age : String,
-        @SerializedName("status_vaksin") val vaccine : String
+        @SerializedName("status_vaksin") val vaccine : String,
+        @SerializedName("informasi") val info : String
 )
 
 data class UserKeep(

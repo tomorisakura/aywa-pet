@@ -48,7 +48,7 @@ class ProfileFragment : Fragment() {
         lifecycleScope.launchWhenCreated {
             mainViewModel.getUserLocalFlow.collect { state ->
                 when(state) {
-                    is State.Loading -> snackBar(binding.root, state.msg).show()
+                    is State.Loading -> Log.d(TAG, state.msg)
                     is State.Error -> Log.e(TAG, state.exception.toString())
                     is State.Success -> {
                         state.data.forEach { users ->

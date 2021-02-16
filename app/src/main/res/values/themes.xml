@@ -23,6 +23,14 @@
         <item name="fontFamily">@font/rubik_medium</item>
     </style>
 
+    <style name="text_information" parent="Theme.MaterialComponents.Light">
+        <item name="android:textSize">14sp</item>
+        <item name="android:color">@color/white</item>
+        <item name="android:textColor">@color/black_87</item>
+        <item name="fontFamily">@font/work_sans</item>
+        <item name="android:lineSpacingExtra">8sp</item>
+    </style>
+
     <style name="intro_head_text_default" parent="Theme.MaterialComponents.Light">
         <item name="android:textColor">@color/grey_300</item>
         <item name="android:textSize">20sp</item>

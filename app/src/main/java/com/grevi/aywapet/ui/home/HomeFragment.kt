@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.FragmentHomeBinding
 import com.grevi.aywapet.ui.detail.DetailActivity
 import com.grevi.aywapet.ui.home.adapter.PetsAdapter
@@ -120,6 +121,7 @@ class HomeFragment : Fragment() {
                             Intent(activity, DetailActivity::class.java).apply {
                                 putExtra("petId", it.id)
                                 startActivity(this)
+                                activity?.overridePendingTransition(R.anim.slide_up, R.anim.slide_down)
                             }
                         }
                     }
