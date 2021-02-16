@@ -1,11 +1,13 @@
 ## Aywa Pet Adopt
-This a final exam to reach a bachelor degree 🧙‍♂️
+![](https://github.com/tomorisakura/aywa-pet/blob/master/assets/preview_adopter.png)
 
 **Status : Maintained 🍕**
 
 ---
 
 #### Short Desc
+
+This a final exam to reach a bachelor degree 🧙‍♂️
 
 This project dedicate for Aywa Pet Clinic Yogyakarta to help them find a adopter who want to take care of stray pet like cat or etc in their clinic. this app maintained by me and always getting some little update.
 ___
