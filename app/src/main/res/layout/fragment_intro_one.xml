@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.intro.IntroOneFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="wrap_content"
@@ -24,9 +23,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="20dp"
-        android:gravity="center"
+        android:gravity="start"
         android:text="@string/intro_one_text"
         app:layout_constraintBottom_toTopOf="@+id/guideline1"
         app:layout_constraintEnd_toEndOf="parent"

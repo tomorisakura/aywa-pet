@@ -105,9 +105,47 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/txl_password"
+                android:id="@+id/txl_nik"
                 style="@style/textInput"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:hint="NIK KTP"
+                app:errorEnabled="true"
+                app:hintAnimationEnabled="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txl_address">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/work_sans"
+                    android:text="@={data.nik}"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/info_ktp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                style="@style/text_info_12"
+                android:text="* Nomor indentitas digunakan untuk validasi pengambilan hewan di klinik 😃"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txl_nik" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txl_password"
+                style="@style/textInput"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="20dp"
@@ -117,7 +155,7 @@
                 app:hintAnimationEnabled="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txl_address"
+                app:layout_constraintTop_toBottomOf="@+id/info_ktp"
                 app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -135,12 +173,12 @@
                 style="@style/primaryButton"
                 android:layout_width="match_parent"
                 android:layout_margin="20dp"
-                android:layout_marginTop="209dp"
-                android:text="Ok, Sudah Siyapp"
                 android:onClick="@{() -> data.submit()}"
+                android:text="Ok, Sudah Siyapp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txl_password"
                 app:layout_constraintVertical_bias="1.0" />
 
             <androidx.constraintlayout.widget.Guideline

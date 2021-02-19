@@ -45,8 +45,8 @@ class RemoteRepos @Inject constructor(private val apiHelperImpl: ApiHelperImpl,p
         } }
     }
 
-    override suspend fun createUser(name: String, phone: String, password: String, alamat: String, email: String, uid: String) : Resource<PostUserResponse> {
-        return apiResponse { apiHelperImpl.createUser(name, phone, password, alamat, email, uid).also {
+    override suspend fun createUser(name: String, phone: String, password: String, alamat: String, nik : String, email: String, uid: String) : Resource<PostUserResponse> {
+        return apiResponse { apiHelperImpl.createUser(name, phone, password, alamat, nik, email, uid).also {
             val data = it.body()?.result ?: return@also
             val token = it.body()?.token ?: return@also
             mapperImpl.mapToEntity(data, token = token).let { data ->

@@ -28,6 +28,7 @@ interface ApiService {
                            @Field("no_hp") phone : String,
                            @Field("password") password : String,
                            @Field("alamat") alamat : String,
+                           @Field("nik") nik : String,
                            @Field("email") email: String,
                            @Field("uid") uid : String
     ) : Response<PostUserResponse>

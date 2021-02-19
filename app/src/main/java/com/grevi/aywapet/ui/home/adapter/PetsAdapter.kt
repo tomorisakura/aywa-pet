@@ -43,7 +43,5 @@ class PetsAdapter : RecyclerView.Adapter<PetsAdapter.PetsVH>() {
         holder.itemView.setOnClickListener { itemClickHelper?.invoke(petsList[position]) }
     }
 
-    override fun getItemCount(): Int {
-        return petsList.size
-    }
+    override fun getItemCount(): Int = petsList.size
 }

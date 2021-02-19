@@ -19,6 +19,7 @@ class RegisViewModel @ViewModelInject constructor(private val remoteRepos: Remot
     var address = MutableLiveData<String>()
     var password = MutableLiveData<String>()
     var email = MutableLiveData<String>()
+    var nik = MutableLiveData<String>()
 
     var uid = MutableLiveData<String>()
     var regisHelper : RegisHelper? = null
@@ -33,23 +34,28 @@ class RegisViewModel @ViewModelInject constructor(private val remoteRepos: Remot
             val password = password.value
             val email = email.value
             val uid = uid.value
+            val nik = nik.value
 
             when {
                 name.isNullOrEmpty() -> regisHelper?.message("Nama ga boleh kosong")
                 phone.isNullOrEmpty() -> regisHelper?.message("No. Hp ga boleh kosong")
                 address.isNullOrEmpty() -> regisHelper?.message("Alamat juga ga boleh kosong")
                 password.isNullOrEmpty() -> regisHelper?.message("Password ga boleh kosong")
+                nik.isNullOrEmpty() -> regisHelper?.message("NIK ga boleh kosong")
                 else -> {
-                    if (password.length < 8) {
-                        regisHelper?.message("Password terlalu pendek")
-                    } else {
-                        val data = remoteRepos.createUser(name, phone, password, address, email!!, uid!!)
-                        data.data?.let {
-                            if (it.status) {
-                                delay(2000L)
-                                regisHelper?.success(email)
-                            } else {
-                                regisHelper?.message("terjadi kesalahan, mohon tunggu beberapa saat")
+                    when {
+                        password.length < 8 -> regisHelper?.message("Password terlalu pendek")
+                        phone.length < 11 -> regisHelper?.message("Nomor Hp tidak valid")
+                        nik.length < 15 -> regisHelper?.message("NIK tidak valid")
+                        else -> {
+                            val data = remoteRepos.createUser(name, phone, password, address, nik, email!!, uid!!)
+                            data.data?.let {
+                                if (it.status) {
+                                    delay(2000L)
+                                    regisHelper?.success(email)
+                                } else {
+                                    regisHelper?.message("terjadi kesalahan, mohon tunggu beberapa saat")
+                                }
                             }
                         }
                     }

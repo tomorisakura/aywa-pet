@@ -113,13 +113,14 @@ class HomeFragment : Fragment() {
                         shimmer.visibility = View.GONE
                         itemViewGroup.visibility = View.VISIBLE
                         rvItemPet.setHasFixedSize(true)
-                        rvItemPet.layoutManager = GridLayoutManager(requireContext(), 2)
+                        rvItemPet.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                         rvItemPet.adapter = petsAdapter
                         response.data?.result?.let { petsAdapter.addItem(it) }
 
                         petsAdapter.itemClickHelper = {
                             Intent(activity, DetailActivity::class.java).apply {
                                 putExtra("petId", it.id)
+                                this.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                                 startActivity(this)
                                 activity?.overridePendingTransition(R.anim.slide_up, R.anim.slide_down)
                             }

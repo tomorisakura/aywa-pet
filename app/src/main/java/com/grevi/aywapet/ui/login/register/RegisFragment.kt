@@ -53,9 +53,6 @@ class RegisFragment : Fragment(), RegisHelper {
                 Resource.STATUS.ERROR -> snackBar(binding.root, response.msg!!).show()
                 Resource.STATUS.EXCEPTION -> snackBar(binding.root, response.msg!!).show()
                 Resource.STATUS.SUCCESS -> {
-                    response.data?.result?.let {
-                        val token = response.data.token
-                    }
                     Intent(activity, HomeActivity::class.java).apply {
                         startActivity(this)
                         activity?.finish()

@@ -92,6 +92,7 @@ class DetailActivity : BaseActivity() {
                         if (state.isNullOrEmpty()) {
                             Intent(this@DetailActivity, KeepedActivity::class.java).apply {
                                 putExtra("petId", pet)
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                                 startActivity(this)
                             }
                         } else{

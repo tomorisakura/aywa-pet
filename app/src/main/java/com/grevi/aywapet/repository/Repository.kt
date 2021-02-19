@@ -11,7 +11,7 @@ interface Repository {
     suspend fun getAnimal() : Resource<AnimalResponse>
     suspend fun getPet(id : String) : Resource<PetDetailResponse>
     suspend fun getEmailVerify(email : String) : Resource<VerifyResponse>
-    suspend fun createUser(name: String, phone: String, password: String, alamat: String, email: String, uid: String) : Resource<PostUserResponse>
+    suspend fun createUser(name: String, phone: String, password: String, alamat: String, nik : String, email: String, uid: String) : Resource<PostUserResponse>
     suspend fun getKeepPet(idUsers : String) : Resource<GetKeepResponse>
     suspend fun keepPost(idPet : String, idUsers : String) : Resource<KeepPostResponse>
     suspend fun getKeepSuccess(idUsers: String) : Resource<GetKeepSuccessResponse>

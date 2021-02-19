@@ -8,7 +8,7 @@ interface ApiHelper {
     suspend fun getAnimal(token : String) : Response<AnimalResponse>
     suspend fun getPetDetail(token : String, id : String) : Response<PetDetailResponse>
     suspend fun getEmailVerify(email : String) :Response<VerifyResponse>
-    suspend fun createUser(name : String, phone : String, password : String, alamat : String, email : String, uid : String) : Response<PostUserResponse>
+    suspend fun createUser(name : String, phone : String, password : String, alamat : String, nik : String, email : String, uid : String) : Response<PostUserResponse>
     suspend fun getKeepPet(token : String, idUser : String) : Response<GetKeepResponse>
     suspend fun postKeep(token : String, idPet : String, idUser: String) : Response<KeepPostResponse>
     suspend fun getKeepSuccess(token : String, idUser: String) : Response<GetKeepSuccessResponse>

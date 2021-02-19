@@ -102,14 +102,14 @@ class KeepedActivity : BaseActivity() {
                         Resource.STATUS.SUCCESS -> {
                             startService(Intent(this, TimerService::class.java))
                             Intent(this, SuccessActivity::class.java).apply {
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                                 startActivity(this)
-                                finish()
                             }
                         }
                     }
                 })
             }
-            .setNeutralButton("Batal") {dialog, _, ->
+            .setNegativeButton("Batal") {dialog, _, ->
                 dialog.dismiss()
             }
     }

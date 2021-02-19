@@ -18,6 +18,7 @@ class SuccessActivity : BaseActivity() {
 
         binding.btnBackToHome.setOnClickListener {
             Intent(this, HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 startActivity(this)
                 finish()
             }
