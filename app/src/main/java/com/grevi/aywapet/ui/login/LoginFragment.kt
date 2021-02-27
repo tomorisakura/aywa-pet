@@ -3,10 +3,10 @@ package com.grevi.aywapet.ui.login
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -21,19 +21,17 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.FragmentLoginBinding
 import com.grevi.aywapet.ui.home.HomeActivity
-import com.grevi.aywapet.ui.viewmodel.MainViewModel
+import com.grevi.aywapet.ui.viewmodel.RegisterViewModel
 import com.grevi.aywapet.utils.Constant.RC_SIGN
 import com.grevi.aywapet.utils.Resource
-import com.grevi.aywapet.utils.SharedUtils
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
 
     private lateinit var binding : FragmentLoginBinding
-    private val mainViewModel : MainViewModel by viewModels()
+    private val registerViewModel : RegisterViewModel by viewModels()
     private lateinit var navController: NavController
 
     private lateinit var googleSignClient : GoogleSignInClient
@@ -41,8 +39,6 @@ class LoginFragment : Fragment() {
     private lateinit var fbAuth : FirebaseAuth
 
     private val TAG = LoginFragment::class.java.simpleName
-
-    @Inject lateinit var sharedUtils: SharedUtils
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,11 +71,13 @@ class LoginFragment : Fragment() {
         googleSignClient = GoogleSignIn.getClient(requireContext(), googleSignOptions)
     }
 
+    @Suppress("DEPRECATION")
     private fun signIn() {
         val signIntent = googleSignClient.signInIntent
         startActivityForResult(signIntent, RC_SIGN)
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RC_SIGN) {
@@ -94,7 +92,7 @@ class LoginFragment : Fragment() {
                 }
             } else {
                 snackBar(binding.root, task.exception.toString()).show()
-                Log.e("TASK_EXCEPTION", task.exception.toString())
+                Log.e(TAG, task.exception.toString())
             }
         }
     }
@@ -106,27 +104,30 @@ class LoginFragment : Fragment() {
                 if (it.isSuccessful) {
                     it.result?.user?.let { users ->
                         observeViewModel(users.email!!, users.displayName!!, users.uid)
+                        binding.btnLoginGoogle.isEnabled = false
                     }
                 } else {
                     snackBar(binding.root, "Gagal Login").show()
+                    binding.btnLoginGoogle.isEnabled = true
                 }
             }
     }
 
     private fun observeViewModel(email : String, name : String, uid : String) {
-        mainViewModel.getEmailVerify(email).observe(viewLifecycleOwner, { response ->
+        registerViewModel.getEmail(email).observe(viewLifecycleOwner, { response ->
             when(response.status) {
-                Resource.STATUS.LOADING -> snackBar(binding.root, response.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(binding.root, response.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(binding.root, response.msg!!).show()
+                Resource.STATUS.LOADING -> binding.btnLoginGoogle.isEnabled = false
+                Resource.STATUS.ERROR -> {
+                    binding.btnLoginGoogle.isEnabled = true
+                    snackBar(binding.root, response.msg!!).show()
+                }
+                Resource.STATUS.EXCEPTION -> {
+                    binding.btnLoginGoogle.isEnabled = true
+                    snackBar(binding.root, response.msg!!).show()
+                }
                 Resource.STATUS.SUCCESS -> {
-                    response.data?.status?.let {
-                        if (it) {
-                            sharedUtils.setLoginKey()
-                            response.data.result.let { users ->
-                                sharedUtils.setUserKey(users.email)
-                                sharedUtils.setUniqueKey(users.id)
-                            }
+                    response.data?.status?.let { status ->
+                        if (status) {
                             Intent(requireActivity(), HomeActivity::class.java).apply {
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 startActivity(this)
@@ -143,12 +144,14 @@ class LoginFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        if (sharedUtils.getLoginShared()) {
-            Intent(requireActivity(), HomeActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                startActivity(this)
-                activity?.finish()
+        registerViewModel.loginState.observe(viewLifecycleOwner, { state ->
+            if (state) {
+                Intent(requireActivity(), HomeActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(this)
+                    activity?.finish()
+                }
             }
-        }
+        })
     }
 }

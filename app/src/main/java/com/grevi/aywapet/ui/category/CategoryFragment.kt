@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.grevi.aywapet.databinding.FragmentCategoryBinding
 import com.grevi.aywapet.ui.category.adapter.CategoryAdapter
 import com.grevi.aywapet.ui.detail.DetailActivity
-import com.grevi.aywapet.ui.viewmodel.MainViewModel
+import com.grevi.aywapet.ui.viewmodel.CategoryViewModel
+import com.grevi.aywapet.ui.viewmodel.PetViewModel
 import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +23,7 @@ class CategoryFragment : Fragment() {
 
     private lateinit var binding: FragmentCategoryBinding
     private val args : CategoryFragmentArgs by navArgs()
-    private val mainViewModel : MainViewModel by viewModels()
+    private val categoryViewModel : CategoryViewModel by viewModels()
     private lateinit var categoryAdapter: CategoryAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -37,29 +38,27 @@ class CategoryFragment : Fragment() {
         initView()
     }
 
-    private fun initView() {
+    private fun initView() = with(binding) {
         categoryAdapter = CategoryAdapter()
-        mainViewModel.getPetByType(args.categoryId).observe(viewLifecycleOwner, { resp ->
+        categoryViewModel.getPetByType(args.categoryId).observe(viewLifecycleOwner, { resp ->
             when(resp.status) {
-                Resource.STATUS.LOADING -> resp.msg?.let { snackBar(binding.root, it).show() }
-                Resource.STATUS.ERROR -> resp.msg?.let { snackBar(binding.root, it).show() }
-                Resource.STATUS.EXCEPTION -> resp.msg?.let { snackBar(binding.root, it).show() }
+                Resource.STATUS.LOADING -> resp.msg?.let { snackBar(root, it).show() }
+                Resource.STATUS.ERROR -> resp.msg?.let { snackBar(root, it).show() }
+                Resource.STATUS.EXCEPTION -> resp.msg?.let { snackBar(root, it).show() }
                 Resource.STATUS.SUCCESS -> {
                     resp.data?.result?.let {
                         if (it.isNullOrEmpty()) {
                             snackBar(binding.root, "Category Ini Belum Terisi 😅").show()
                         } else {
-                            with(binding) {
-                                categoryText.text = args.categoryName
-                                rvListPetCategory.setHasFixedSize(true)
-                                rvListPetCategory.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-                                rvListPetCategory.adapter = categoryAdapter
-                                categoryAdapter.addItem(it)
-                                categoryAdapter.itemClickHelper = {
-                                    Intent(requireActivity(), DetailActivity::class.java).apply {
-                                        putExtra("petId", it.id)
-                                        startActivity(this)
-                                    }
+                            categoryText.text = args.categoryName
+                            rvListPetCategory.setHasFixedSize(true)
+                            rvListPetCategory.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
+                            rvListPetCategory.adapter = categoryAdapter
+                            categoryAdapter.addItem(it)
+                            categoryAdapter.itemClickHelper = {
+                                Intent(requireActivity(), DetailActivity::class.java).apply {
+                                    putExtra("petId", it.id)
+                                    startActivity(this)
                                 }
                             }
                         }

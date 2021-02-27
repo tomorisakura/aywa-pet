@@ -10,6 +10,7 @@ data class Users(
         @ColumnInfo(name = "username") var username : String,
         @ColumnInfo(name = "email") var email : String,
         @ColumnInfo(name = "name") var name : String,
-        @ColumnInfo(name = "uid") var uid : String,
-        @ColumnInfo(name = "token") var token : String
+        @ColumnInfo(name="address") var address : String,
+        @ColumnInfo(name = "token") var token : String,
+        @ColumnInfo(name = "uid") var uid : String
 )

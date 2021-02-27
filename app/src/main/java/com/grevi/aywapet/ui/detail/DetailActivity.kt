@@ -2,9 +2,9 @@ package com.grevi.aywapet.ui.detail
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -12,18 +12,23 @@ import com.grevi.aywapet.databinding.ActivityDetailBinding
 import com.grevi.aywapet.ui.base.BaseActivity
 import com.grevi.aywapet.ui.detail.adapter.PicturesAdapter
 import com.grevi.aywapet.ui.keep.keeped.KeepedActivity
-import com.grevi.aywapet.ui.viewmodel.MainViewModel
+import com.grevi.aywapet.ui.viewmodel.KeepViewModel
+import com.grevi.aywapet.ui.viewmodel.PetViewModel
+import com.grevi.aywapet.utils.Constant.PET_ID
 import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.snackBar
-import dagger.hilt.android.AndroidEntryPoint
 
 class DetailActivity : BaseActivity() {
 
     private lateinit var binding : ActivityDetailBinding
-    private val mainViewModel : MainViewModel by viewModels()
+    private val petViewModel : PetViewModel by viewModels()
+    private val keepViewModel : KeepViewModel by viewModels()
+
     private lateinit var picturesAdapter: PicturesAdapter
     private lateinit var snapHelper: LinearSnapHelper
     private lateinit var pagerSnapHelper: PagerSnapHelper
+
+    private val TAG = DetailActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,20 +42,27 @@ class DetailActivity : BaseActivity() {
         picturesAdapter = PicturesAdapter()
         snapHelper = LinearSnapHelper()
         pagerSnapHelper = PagerSnapHelper()
+        val id = intent.getStringExtra(PET_ID).toString()
 
-        val id = intent.getStringExtra("petId").toString()
-
-        mainViewModel.getPet(id).observe(this, { response ->
+        petViewModel.getPet(id).observe(this, { response ->
             when(response.status) {
-                Resource.STATUS.LOADING -> binding.pgLoading.visibility = View.VISIBLE
-                Resource.STATUS.EXCEPTION -> snackBar(binding.root, response.msg!!).show()
+                Resource.STATUS.LOADING -> {
+                    with(binding) {
+                        appbar.visibility = View.GONE
+                        btnAdopt.visibility = View.GONE
+                        pgLoading.visibility = View.VISIBLE
+                    }
+                }
+                Resource.STATUS.EXCEPTION -> Log.e(TAG, response.msg!!)
                 Resource.STATUS.ERROR -> snackBar(binding.root, response.msg!!).show()
                 Resource.STATUS.SUCCESS -> {
 
                     response.data?.result?.let { pet ->
                         with(binding) {
+                            appbar.visibility = View.VISIBLE
                             pgLoading.visibility = View.GONE
                             groupView.visibility = View.VISIBLE
+                            btnAdopt.visibility = View.VISIBLE
                             supportActionBar?.title = pet.petName
                             supportActionBar?.subtitle = "Owner Lama ${pet.oldOwner}"
                             picturesAdapter.addItem(pet.pictures)
@@ -81,32 +93,27 @@ class DetailActivity : BaseActivity() {
 
     }
 
-    private fun observeChecker(pet : String) {
-        mainViewModel.keepData.observe(this, {
+    private fun observeChecker(pet : String) = with(binding) {
+        keepViewModel.keepData.observe(this@DetailActivity, {
             when(it.status) {
-                Resource.STATUS.LOADING -> snackBar(binding.root, it.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(binding.root, it.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(binding.root, it.msg!!).show()
+                Resource.STATUS.LOADING -> snackBar(root, it.msg!!).show()
+                Resource.STATUS.ERROR -> snackBar(root, it.msg!!).show()
+                Resource.STATUS.EXCEPTION -> snackBar(root, it.msg!!).show()
                 Resource.STATUS.SUCCESS -> {
                     it.data?.result.let { state ->
                         if (state.isNullOrEmpty()) {
                             Intent(this@DetailActivity, KeepedActivity::class.java).apply {
-                                putExtra("petId", pet)
+                                putExtra(PET_ID, pet)
                                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                                 startActivity(this)
                             }
                         } else{
-                            snackBar(binding.root, "Selesaikan terlebih dahulu keep kamu").show()
+                            snackBar(root, "Selesaikan terlebih dahulu keep kamu").show()
                         }
                     }
                 }
             }
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        snackBar(binding.root, "resume")
     }
 
 }

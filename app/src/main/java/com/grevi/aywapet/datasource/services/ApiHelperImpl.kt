@@ -1,6 +1,8 @@
 package com.grevi.aywapet.datasource.services
 
 import com.grevi.aywapet.datasource.response.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import javax.inject.Inject
 
@@ -21,8 +23,8 @@ class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : Ap
         return apiService.getEmailVerify(email)
     }
 
-    override suspend fun createUser(name: String, phone: String, password: String, alamat: String, nik : String, email: String, uid: String): Response<PostUserResponse> {
-        return apiService.createUser(name, phone, password, alamat, nik, email, uid)
+    override suspend fun createUser(name: String, phone: String, alamat: String, email: String, uid: String): Response<PostUserResponse> {
+        return apiService.createUser(name, phone, alamat, email, uid)
     }
 
     override suspend fun getKeepPet(token : String, idUser: String): Response<GetKeepResponse> {
@@ -39,6 +41,13 @@ class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : Ap
 
     override suspend fun getPetByType(token : String, idType: String): Response<PetResponse> {
         return apiService.getPetByType(token, idType)
+    }
+
+    override suspend fun getProvince(): Response<ProvinceResponse> = apiService.getProvince()
+    override suspend fun getDistrict(id: String): Response<KabupatenResponse> = apiService.getKabupaten(id)
+    override suspend fun getSubDistrict(id: String): Response<KecamatanResponse> = apiService.getKecamatan(id)
+    override suspend fun createUserFlow(name: String, phone: String, alamat: String, email: String, uid: String): Flow<Response<PostUserResponse>> {
+        return flow { apiService.createUser(name, phone, alamat, email, uid) }
     }
 
 }

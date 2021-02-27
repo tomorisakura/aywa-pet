@@ -13,11 +13,13 @@
         android:layout_height="?attr/actionBarSize"
         android:backgroundTint="?android:attr/windowBackground">
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways|snap"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:layout_collapseMode="pin"/>
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -33,11 +35,13 @@
 
             <TextView
                 android:id="@+id/tv_title"
+                style="@style/text_head_default"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
-                style="@style/text_head_default"
                 android:text="Batas Waktu Pengambilan Hewan"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintBottom_toTopOf="@+id/guideline4"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -47,6 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
+                app:layout_constraintVertical_bias="0.0"
                 app:layout_constraintTop_toBottomOf="@id/tv_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
@@ -68,6 +73,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintBottom_toTopOf="@+id/guideline4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/card_timer">
 
@@ -83,9 +90,12 @@
             <TextView
                 android:id="@+id/pet_name"
                 style="@style/text_rv_head"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintBottom_toTopOf="@+id/guideline4"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/materialCardView7"
                 app:layout_constraintTop_toTopOf="@+id/materialCardView7"
                 tools:text="Juggernaut" />
@@ -93,10 +103,13 @@
             <TextView
                 android:id="@+id/pet_type"
                 style="@style/text_rv_info_green"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="8dp"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintBottom_toTopOf="@+id/guideline4"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/materialCardView7"
                 app:layout_constraintTop_toBottomOf="@+id/pet_name"
                 tools:text="Kucing" />
@@ -104,10 +117,13 @@
             <TextView
                 android:id="@+id/pet_clinic"
                 style="@style/text_info_head"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="8dp"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintBottom_toTopOf="@+id/guideline4"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/materialCardView7"
                 app:layout_constraintTop_toBottomOf="@+id/pet_type"
                 tools:text="Klinik Hewan Aywa" />
@@ -116,14 +132,17 @@
                 android:id="@+id/address_clinic"
                 style="@style/text_info_address"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
                 android:layout_marginStart="15dp"
-                android:layout_marginEnd="20dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginEnd="15dp"
+                android:layout_marginBottom="15dp"
                 android:lines="3"
-                app:layout_constraintStart_toEndOf="@+id/materialCardView7"
+                app:layout_constraintBottom_toTopOf="@+id/guideline4"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/materialCardView7"
                 app:layout_constraintTop_toBottomOf="@+id/pet_clinic"
+                app:layout_constraintVertical_bias="0.0"
                 tools:text="Jl Desa Jatimulyo , Sleman, Kab. Sleman, DAERAH ISTIMEWA YOGYAKARTA" />
 
             <androidx.constraintlayout.widget.Guideline
@@ -150,19 +169,23 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:text="Syarat"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view1" />
+                app:layout_constraintTop_toBottomOf="@+id/view1"
+                app:layout_constraintVertical_bias="0.0" />
 
             <ListView
                 android:id="@+id/list_terms"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="20dp"
                 android:dividerHeight="1dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView5" />
+                app:layout_constraintTop_toBottomOf="@+id/textView5"
+                app:layout_constraintVertical_bias="0.0" />
 
             <CheckBox
                 android:id="@+id/cb_accept_terms"
@@ -172,9 +195,11 @@
                 android:layout_margin="20dp"
                 android:text="Ok, Saya Setuju"
                 android:textAppearance="@style/text_rv_info_blue"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/list_terms" />
+                app:layout_constraintTop_toBottomOf="@+id/list_terms"
+                app:layout_constraintVertical_bias="0.0" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_keep"

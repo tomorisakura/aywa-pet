@@ -9,6 +9,5 @@ data class User(
         @SerializedName("no_hp") val phone : String,
         @SerializedName("email") val email : String,
         @SerializedName("alamat") val address : String,
-        @SerializedName("password") val password : String,
         @SerializedName("uid_auth") val uid : String
 )

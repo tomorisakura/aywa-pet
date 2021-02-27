@@ -26,9 +26,7 @@ interface ApiService {
     @POST("/api/users/post")
     suspend fun createUser(@Field("name") name : String,
                            @Field("no_hp") phone : String,
-                           @Field("password") password : String,
                            @Field("alamat") alamat : String,
-                           @Field("nik") nik : String,
                            @Field("email") email: String,
                            @Field("uid") uid : String
     ) : Response<PostUserResponse>
@@ -41,4 +39,13 @@ interface ApiService {
 
     @GET("/api/pet/get-type")
     suspend fun getPetByType(@Header("x-access-token") token : String, @Query("id") idType : String) : Response<PetResponse>
+
+    @GET("/api/province")
+    suspend fun getProvince() : Response<ProvinceResponse>
+
+    @GET("/api/kabupaten/{id}")
+    suspend fun getKabupaten(@Path("id") id : String) : Response<KabupatenResponse>
+
+    @GET("/api/kecamatan/{id}")
+    suspend fun getKecamatan(@Path("id") id : String) : Response<KecamatanResponse>
 }

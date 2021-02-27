@@ -10,7 +10,8 @@ import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.ActivityKeepedBinding
 import com.grevi.aywapet.service.TimerService
 import com.grevi.aywapet.ui.base.BaseActivity
-import com.grevi.aywapet.ui.viewmodel.MainViewModel
+import com.grevi.aywapet.ui.viewmodel.KeepViewModel
+import com.grevi.aywapet.ui.viewmodel.PetViewModel
 import com.grevi.aywapet.utils.Constant.BASE_URL
 import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.SharedUtils
@@ -21,7 +22,8 @@ import javax.inject.Inject
 class KeepedActivity : BaseActivity() {
 
     private lateinit var binding : ActivityKeepedBinding
-    private val mainViewModel : MainViewModel by viewModels()
+    private val keepViewModel : KeepViewModel by viewModels()
+    private val petViewModel : PetViewModel by viewModels()
 
     private var cbState : Boolean = false
 
@@ -44,29 +46,27 @@ class KeepedActivity : BaseActivity() {
         return true
     }
 
-    private fun initView() {
+    private fun initView() = with(binding) {
         val id = intent.getStringExtra("petId").toString()
-        mainViewModel.getPet(id).observe(this, { response ->
+        petViewModel.getPet(id).observe(this@KeepedActivity, { response ->
             when(response.status) {
-                Resource.STATUS.LOADING -> snackBar(binding.root, response.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(binding.root, response.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(binding.root, response.msg!!).show()
+                Resource.STATUS.LOADING -> snackBar(root, response.msg!!).show()
+                Resource.STATUS.EXCEPTION -> snackBar(root, response.msg!!).show()
+                Resource.STATUS.ERROR -> snackBar(root, response.msg!!).show()
                 Resource.STATUS.SUCCESS -> {
                     response.data?.result?.let {pet ->
-                        with(binding) {
-                            supportActionBar?.subtitle = pet.petName
-                            Glide.with(this@KeepedActivity).load("$BASE_URL/${pet.pictures[0].picUrl}").placeholder(R.drawable.ic_image_placeholder).into(picPet)
-                            petName.text = pet.petName
-                            petType.text = pet.types.jenis
-                            petClinic.text = pet.clinicId.name
-                            addressClinic.text = pet.clinicId.address
+                        supportActionBar?.subtitle = pet.petName
+                        Glide.with(this@KeepedActivity).load("$BASE_URL/${pet.pictures[0].picUrl}").placeholder(R.drawable.ic_image_placeholder).into(picPet)
+                        petName.text = pet.petName
+                        petType.text = pet.types.jenis
+                        petClinic.text = pet.clinicId.name
+                        addressClinic.text = pet.clinicId.address
 
-                            btnKeep.setOnClickListener {
-                                if (cbState) {
-                                    materialDialog("Terima kasih telah menerima terms & condition dari Aywa Pet, pastikan kamu memenuhi syarat ya 😍", pet.id).show()
-                                } else {
-                                    snackBar(binding.root, "Anda Belum Menyetujui Terms & Condition").show()
-                                }
+                        btnKeep.setOnClickListener {
+                            if (cbState) {
+                                materialDialog("Terima kasih telah menerima terms & condition dari Aywa Pet, pastikan kamu memenuhi syarat ya 😍", pet.id).show()
+                            } else {
+                                snackBar(root, "Anda Belum Menyetujui Syarat & Ketentuan").show()
                             }
                         }
                     }
@@ -76,15 +76,15 @@ class KeepedActivity : BaseActivity() {
         })
         listOf(getString(R.string.terms1), getString(R.string.terms2), getString(R.string.terms3), getString(R.string.terms4)).apply {
             val termAdapter = ArrayAdapter(this@KeepedActivity, R.layout.list_terms, R.id.terms, this)
-            binding.listTerms.adapter = termAdapter
+            listTerms.adapter = termAdapter
         }
 
-        binding.cbAcceptTerms.setOnCheckedChangeListener { buttonView, isChecked ->
+        cbAcceptTerms.setOnCheckedChangeListener { buttonView, isChecked ->
             if(isChecked) {
                 cbState = isChecked
             } else {
                 cbState = isChecked
-                snackBar(binding.root, "Anda Belum Menyetujui Terms & Condition").show()
+                snackBar(root, "Anda Belum Menyetujui Terms & Condition").show()
             }
         }
     }
@@ -94,7 +94,7 @@ class KeepedActivity : BaseActivity() {
             .setTitle("Keeped")
             .setMessage(msg)
             .setPositiveButton("Ok, OTW ") { dialog, _, ->
-                mainViewModel.keepPostData(id).observe(this, {response ->
+                keepViewModel.keepPostData(id).observe(this, {response ->
                     when(response.status) {
                         Resource.STATUS.LOADING -> snackBar(binding.root, response.msg!!).show()
                         Resource.STATUS.ERROR -> snackBar(binding.root, response.msg!!).show()

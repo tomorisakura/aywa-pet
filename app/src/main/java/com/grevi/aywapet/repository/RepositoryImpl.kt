@@ -1,5 +1,6 @@
 package com.grevi.aywapet.repository
 
+import android.util.Log
 import com.grevi.aywapet.datasource.ApiResponse
 import com.grevi.aywapet.datasource.response.*
 import com.grevi.aywapet.datasource.services.ApiHelperImpl
@@ -11,10 +12,14 @@ import com.grevi.aywapet.utils.SharedUtils
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
+import retrofit2.Response
 import javax.inject.Inject
 
-class RemoteRepos @Inject constructor(private val apiHelperImpl: ApiHelperImpl,private val databaseHelperImpl: DatabaseHelperImpl,
-                                      private val mapperImpl : EntityMapperImpl, private val sharedUtils: SharedUtils) : Repository, ApiResponse() {
+class RepositoryImpl @Inject constructor(private val apiHelperImpl: ApiHelperImpl, private val databaseHelperImpl: DatabaseHelperImpl,
+                                         private val mapperImpl : EntityMapperImpl, private val sharedUtils: SharedUtils) : Repository, ApiResponse() {
+
+    private val TAG = RepositoryImpl::class.java.simpleName
 
     override suspend fun getAllPet() : Resource<PetResponse> {
         var token : String? = null
@@ -45,11 +50,11 @@ class RemoteRepos @Inject constructor(private val apiHelperImpl: ApiHelperImpl,p
         } }
     }
 
-    override suspend fun createUser(name: String, phone: String, password: String, alamat: String, nik : String, email: String, uid: String) : Resource<PostUserResponse> {
-        return apiResponse { apiHelperImpl.createUser(name, phone, password, alamat, nik, email, uid).also {
+    override suspend fun createUser(name: String, phone: String, alamat: String, email: String, uid: String) : Resource<PostUserResponse> {
+        return apiResponse { apiHelperImpl.createUser(name, phone, alamat, email, uid).also {
             val data = it.body()?.result ?: return@also
             val token = it.body()?.token ?: return@also
-            mapperImpl.mapToEntity(data, token = token).let { data ->
+            mapperImpl.mapToEntity(data, token = token).also { data ->
                 sharedUtils.setUniqueKey(data.id)
                 databaseHelperImpl.insertUser(data)
             }
@@ -82,6 +87,25 @@ class RemoteRepos @Inject constructor(private val apiHelperImpl: ApiHelperImpl,p
 
     override suspend fun getLocalUser(): Flow<MutableList<Users>> {
         return databaseHelperImpl.getUser()
+    }
+
+    override suspend fun getProvince(): Resource<ProvinceResponse> = apiResponse { apiHelperImpl.getProvince() }
+    override suspend fun getDistrict(id: String): Resource<KabupatenResponse> = apiResponse { apiHelperImpl.getDistrict(id) }
+    override suspend fun getSubDistrict(id: String): Resource<KecamatanResponse> = apiResponse { apiHelperImpl.getSubDistrict(id) }
+
+    override suspend fun createFlow(name: String, phone: String, alamat: String, email: String, uid: String): Flow<PostUserResponse> {
+        return flow {
+            apiHelperImpl.createUserFlow(name, phone, alamat, email, uid).collect { resp ->
+                if (resp.isSuccessful) {
+                    val data = resp.body() ?: return@collect
+                    mapperImpl.mapToEntity(data.result, data.token).let {
+                        databaseHelperImpl.insertUser(it)
+                    }
+                    emit(data)
+                    Log.i(TAG, data.toString())
+                }
+            }
+        }
     }
 
 }

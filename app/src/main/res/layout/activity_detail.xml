@@ -11,13 +11,14 @@
         android:id="@+id/appbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:background="?android:attr/windowBackground">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:id="@+id/collapse_toolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|enterAlwaysCollapsed"
             app:contentScrim="?android:attr/windowBackground">
 
             <LinearLayout
@@ -41,7 +42,7 @@
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <androidx.appcompat.widget.Toolbar
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -62,10 +63,11 @@
             android:layout_height="wrap_content"
             android:paddingBottom="10dp">
 
-            <ProgressBar
+            <com.google.android.material.progressindicator.LinearProgressIndicator
                 android:id="@+id/pg_loading"
                 android:layout_width="0dp"
-                android:layout_height="20dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="50dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -76,7 +78,7 @@
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids=" textView16, view1,
+                app:constraint_referenced_ids="textView16, view1, view2,
                  materialCardView, materialCardView2,
                  materialCardView3, materialCardView4,
                  materialCardView5, materialCardView6,
@@ -164,7 +166,7 @@
                 style="@style/text_head_default"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="30dp"
+                android:layout_margin="20dp"
                 android:text="Informasi"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -172,7 +174,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 app:cardBackgroundColor="@color/blue_25"
@@ -223,7 +225,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView3"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 app:cardBackgroundColor="@color/blue_25"
@@ -274,7 +276,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView2"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 app:cardBackgroundColor="@color/blue_25"
@@ -325,7 +327,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView4"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 app:cardBackgroundColor="@color/blue_25"
@@ -376,7 +378,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView5"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 app:cardBackgroundColor="@color/blue_25"
@@ -427,7 +429,7 @@
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView6"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 app:cardBackgroundColor="@color/blue_25"
@@ -519,6 +521,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:text="Adopsi"
+        android:visibility="gone"
         app:icon="@drawable/ic_twotone_favorite_24"
         android:layout_gravity="bottom|end"/>
 

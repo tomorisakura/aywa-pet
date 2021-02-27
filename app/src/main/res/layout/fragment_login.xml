@@ -10,10 +10,10 @@
 
     <TextView
         style="@style/intro_head_text_large"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginEnd="190dp"
+        android:layout_marginEnd="50dp"
         android:text="Haloo 👋\nSilahkan sign in terlebih dahulu ya"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,9 +40,10 @@
         style="@style/primaryButton"
         android:layout_width="match_parent"
         android:layout_margin="30dp"
-        android:text="Daftar dengan akun Google"
+        android:text="Masuk dengan akun Google"
         app:icon="@drawable/ic_google_icon"
         app:iconGravity="textStart"
+        android:enabled="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

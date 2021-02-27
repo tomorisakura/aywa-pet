@@ -4,15 +4,15 @@ import android.content.Context
 import com.grevi.aywapet.datasource.services.ApiHelper
 import com.grevi.aywapet.datasource.services.ApiHelperImpl
 import com.grevi.aywapet.datasource.services.ApiService
-import com.grevi.aywapet.repository.RemoteRepos
+import com.grevi.aywapet.repository.RepositoryImpl
 import com.grevi.aywapet.repository.Repository
 import com.grevi.aywapet.utils.Constant
 import com.grevi.aywapet.utils.SharedUtils
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -20,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object Module {
 
     @Provides
@@ -59,8 +59,8 @@ object Module {
 
     @Provides
     @Singleton
-    fun provideRepository(remoteRepos: RemoteRepos) : Repository {
-        return remoteRepos
+    fun provideRepository(repositoryImpl: RepositoryImpl) : Repository {
+        return repositoryImpl
     }
 
     @Provides

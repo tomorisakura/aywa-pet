@@ -11,6 +11,7 @@ class EntityMapperImpl @Inject constructor() : EntityMapper {
                 username = model.username,
                 name = model.name,
                 email = model.email,
+                address = model.address,
                 uid = model.uid,
                 token = token
         )

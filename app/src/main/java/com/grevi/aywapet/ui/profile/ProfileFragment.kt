@@ -11,22 +11,21 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.grevi.aywapet.databinding.FragmentProfileBinding
 import com.grevi.aywapet.ui.profile.adapter.KeepSuccessAdapter
-import com.grevi.aywapet.ui.viewmodel.MainViewModel
+import com.grevi.aywapet.ui.viewmodel.KeepViewModel
+import com.grevi.aywapet.ui.viewmodel.ProfileViewModel
 import com.grevi.aywapet.utils.Resource
-import com.grevi.aywapet.utils.SharedUtils
 import com.grevi.aywapet.utils.State
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment : Fragment() {
 
     private lateinit var binding : FragmentProfileBinding
-    private val mainViewModel : MainViewModel by viewModels()
+    private val profileViewModel : ProfileViewModel by viewModels()
+    private val keepViewModel : KeepViewModel by viewModels()
     private lateinit var keepSuccessAdapter: KeepSuccessAdapter
-    @Inject lateinit var sharedUtils: SharedUtils
 
     private val TAG = ProfileFragment::class.java.simpleName
 
@@ -46,7 +45,7 @@ class ProfileFragment : Fragment() {
 
     private fun initView() {
         lifecycleScope.launchWhenCreated {
-            mainViewModel.getUserLocalFlow.collect { state ->
+            profileViewModel.getUserLocalFlow.collect { state ->
                 when(state) {
                     is State.Loading -> Log.d(TAG, state.msg)
                     is State.Error -> Log.e(TAG, state.exception.toString())
@@ -61,7 +60,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        mainViewModel.keepSuccessData.observe(viewLifecycleOwner, { resp ->
+        keepViewModel.keepSuccessData.observe(viewLifecycleOwner, { resp ->
             when(resp.status) {
                 Resource.STATUS.LOADING -> snackBar(binding.root, resp.msg!!).show()
                 Resource.STATUS.EXCEPTION -> snackBar(binding.root, resp.msg!!).show()
