@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -14,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.FragmentKeepBinding
 import com.grevi.aywapet.service.TimerService
 import com.grevi.aywapet.ui.keep.adapter.KeepAdapter
@@ -48,7 +50,14 @@ class KeepFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         intentFilter = IntentFilter(TIMER_BR)
+        setHasOptionsMenu(true)
         initView()
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.notif).isVisible = false
+        menu.findItem(R.id.edit_account).isVisible = false
     }
 
     private fun initView() = with(binding) {
@@ -69,7 +78,7 @@ class KeepFragment : Fragment() {
                             rvKeep.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                             rvKeep.adapter = keepAdapter
                             keepAdapter.onItemClick = { keep ->
-                                BottomSheetBehavior.from(bottomSheet).also {
+                                BottomSheetBehavior.from(bottomSheet).also { bottomSheet ->
                                     petViewModel.getPet(keep.petId.id).observe(viewLifecycleOwner, { resp ->
                                         when(resp.status) {
                                             Resource.STATUS.ERROR -> Log.e(TAG, resp.msg!!)
@@ -86,7 +95,7 @@ class KeepFragment : Fragment() {
                                             }
                                         }
                                     })
-                                    it.state = BottomSheetBehavior.STATE_EXPANDED
+                                    bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
                                 }
                             }
                         }

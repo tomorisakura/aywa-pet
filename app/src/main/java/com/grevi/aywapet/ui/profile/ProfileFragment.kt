@@ -3,12 +3,14 @@ package com.grevi.aywapet.ui.profile
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.FragmentProfileBinding
 import com.grevi.aywapet.ui.profile.adapter.KeepSuccessAdapter
 import com.grevi.aywapet.ui.viewmodel.KeepViewModel
@@ -40,10 +42,17 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setHasOptionsMenu(true)
         initView()
     }
 
-    private fun initView() {
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.notif).isVisible = false
+        menu.findItem(R.id.edit_account).isVisible = true
+    }
+
+    private fun initView() = with(binding) {
         lifecycleScope.launchWhenCreated {
             profileViewModel.getUserLocalFlow.collect { state ->
                 when(state) {
@@ -51,8 +60,9 @@ class ProfileFragment : Fragment() {
                     is State.Error -> Log.e(TAG, state.exception.toString())
                     is State.Success -> {
                         state.data.forEach { users ->
-                            binding.tvUsername.text = users.username
-                            binding.tvEmail.text = users.email
+                            tvUsername.text = users.username
+                            tvEmail.text = users.email
+                            tvAddress.text = users.address
                         }
                     }
                     else -> Unit
@@ -62,17 +72,15 @@ class ProfileFragment : Fragment() {
 
         keepViewModel.keepSuccessData.observe(viewLifecycleOwner, { resp ->
             when(resp.status) {
-                Resource.STATUS.LOADING -> snackBar(binding.root, resp.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(binding.root, resp.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(binding.root, resp.msg!!).show()
+                Resource.STATUS.LOADING -> snackBar(root, resp.msg!!).show()
+                Resource.STATUS.EXCEPTION -> snackBar(root, resp.msg!!).show()
+                Resource.STATUS.ERROR -> snackBar(root, resp.msg!!).show()
                 Resource.STATUS.SUCCESS -> {
                     resp.data?.result?.let {
-                        with(binding) {
-                            keepSuccessAdapter = KeepSuccessAdapter(it)
-                            rvListKeepStatus.setHasFixedSize(true)
-                            rvListKeepStatus.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-                            rvListKeepStatus.adapter = keepSuccessAdapter
-                        }
+                        keepSuccessAdapter = KeepSuccessAdapter(it)
+                        rvListKeepStatus.setHasFixedSize(true)
+                        rvListKeepStatus.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
+                        rvListKeepStatus.adapter = keepSuccessAdapter
                     }
                 }
             }

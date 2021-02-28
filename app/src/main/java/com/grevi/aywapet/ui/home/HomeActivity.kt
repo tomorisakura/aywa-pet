@@ -2,6 +2,8 @@ package com.grevi.aywapet.ui.home
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.View
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -27,15 +29,17 @@ class HomeActivity : BaseActivity(){
         setupActionBarWithNavController(navController, appBar)
         binding.bottomNavigation.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            //handle navigation the users if they dont have key or not sign in
+            //handle navigation properties
             when(destination.id) {
-                R.id.navigation_keep -> {
-                    Log.v(TAG, "keep")
-                }
-                R.id.navigation_account -> {
-                    Log.v(TAG, "akun")
-                }
+                R.id.navigation_keep -> binding.searchCard.visibility = View.GONE
+                R.id.navigation_account -> binding.searchCard.visibility = View.GONE
+                R.id.navigation_home -> binding.searchCard.visibility = View.VISIBLE
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.app_bar_menu, menu)
+        return true
     }
 }

@@ -2,9 +2,7 @@ package com.grevi.aywapet.ui.home
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.NavController
@@ -12,11 +10,15 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.FragmentHomeBinding
+import com.grevi.aywapet.ui.category.CategoryActivity
 import com.grevi.aywapet.ui.detail.DetailActivity
 import com.grevi.aywapet.ui.home.adapter.PetsAdapter
 import com.grevi.aywapet.ui.home.adapter.TypesAdapter
+import com.grevi.aywapet.ui.notif.NotificationActivity
 import com.grevi.aywapet.ui.viewmodel.CategoryViewModel
 import com.grevi.aywapet.ui.viewmodel.PetViewModel
+import com.grevi.aywapet.utils.Constant.CATEGORY_ID
+import com.grevi.aywapet.utils.Constant.CATEGORY_NAME
 import com.grevi.aywapet.utils.Constant.PET_ID
 import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.snackBar
@@ -46,7 +48,24 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        setHasOptionsMenu(true)
         initTypes()
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.edit_account).isVisible = false
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.notif -> {
+                Intent(activity, NotificationActivity::class.java).apply {
+                    startActivity(this)
+                }
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun initTypes() = with(binding) {
@@ -81,8 +100,11 @@ class HomeFragment : Fragment() {
                     response.data?.result?.let { typesAdapter.addItem(it) }
 
                     typesAdapter.typeItemClicked = {
-                        HomeFragmentDirections.actionNavigationHomeToCategoryFragment(it.id, it.jenis).apply {
-                            navController.navigate(this)
+                        Intent(activity, CategoryActivity::class.java).apply {
+                            putExtra(CATEGORY_ID, it.id)
+                            putExtra(CATEGORY_NAME, it.jenis)
+                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            startActivity(this)
                         }
                     }
                 }

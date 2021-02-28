@@ -10,6 +10,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="grey_300">#3E3E3E</color>
     <color name="grey_100">#9F9F9F</color>
+    <color name="grey_120">#F6F6F6</color>
     <color name="blue_300">#567BFF</color>
     <color name="blue_sky_200">#E0E5F5</color>
     <color name="green_400">#43A459</color>

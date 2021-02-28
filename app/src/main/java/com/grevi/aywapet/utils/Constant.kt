@@ -13,4 +13,6 @@ object Constant {
 
     const val TIMER_BR = "timer_br"
     const val PET_ID = "petId"
+    const val CATEGORY_ID = "categoryId"
+    const val CATEGORY_NAME = "categoryName"
 }

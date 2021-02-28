@@ -11,9 +11,9 @@
     <string name="title_keep">Keep</string>
     <string name="title_account">Akun</string>
     <string name="title_login">Login</string>
+    <string name="notification_text">Pemberitahuan</string>
     <string name="category_text">Kategori Hewan</string>
     <string name="detail_text">Detail Hewan</string>
-
     <string name="terms1">Pecinta Hewan</string>
     <string name="terms2">Lokasi Calon Adopter Di Daerah Jogja</string>
     <string name="terms3">Memberikan Waktu Bermain Bersama Dengan Hewan Peliharaan</string>

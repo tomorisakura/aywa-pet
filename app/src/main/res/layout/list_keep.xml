@@ -57,14 +57,14 @@
         app:layout_constraintTop_toTopOf="@+id/pet_type"
         tools:text="Himalayan" />
 
-    <TextView
-        android:id="@+id/textView10"
-        style="@style/text_info_head"
+    <Button
+        android:id="@+id/btn_show_sheet"
+        style="@style/outlinedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:gravity="start"
-        android:text="Lihat Batas Waktu Pengambilan"
+        android:text="Batas Waktu Pengambilan"
+        android:textSize="12sp"
         app:layout_constraintBottom_toTopOf="@+id/view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/materialCardView7"

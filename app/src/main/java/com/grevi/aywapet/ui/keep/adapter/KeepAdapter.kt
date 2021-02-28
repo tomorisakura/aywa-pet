@@ -20,6 +20,7 @@ class KeepAdapter : RecyclerView.Adapter<KeepAdapter.KeepVH>() {
                 petName.text = keep.petId.petName
                 petType.text = keep.petId.ras
                 genderPet.text = keep.petId.gender
+                btnShowSheet.setOnClickListener { onItemClick?.invoke(keep) }
                 Glide.with(this.root).load("$BASE_URL/${keep.petId.pictures[0].picUrl}").placeholder(R.drawable.ic_image_placeholder).into(petPic)
             }
         }
@@ -38,7 +39,6 @@ class KeepAdapter : RecyclerView.Adapter<KeepAdapter.KeepVH>() {
 
     override fun onBindViewHolder(holder: KeepAdapter.KeepVH, position: Int) {
         holder.bind(keepList[position])
-        holder.itemView.setOnClickListener { onItemClick?.invoke(keepList[position]) }
     }
 
     override fun getItemCount(): Int = keepList.size

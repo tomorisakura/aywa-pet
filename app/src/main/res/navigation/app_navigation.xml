@@ -10,9 +10,6 @@
         android:name="com.grevi.aywapet.ui.home.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_navigation_home_to_categoryFragment"
-            app:destination="@id/categoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/navigation_keep"
@@ -24,16 +21,4 @@
         android:name="com.grevi.aywapet.ui.profile.ProfileFragment"
         android:label="@string/title_account"
         tools:layout="@layout/fragment_profile" />
-    <fragment
-        android:id="@+id/categoryFragment"
-        android:name="com.grevi.aywapet.ui.category.CategoryFragment"
-        android:label="@string/category_text"
-        tools:layout="@layout/fragment_category" >
-        <argument
-            android:name="categoryId"
-            app:argType="string" />
-        <argument
-            android:name="categoryName"
-            app:argType="string" />
-    </fragment>
 </navigation>
