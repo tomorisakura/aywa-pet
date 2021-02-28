@@ -14,7 +14,10 @@ ___
 
 ## Preview
 
-**please wait...**
+**Alpha Version**
+
+![](https://github.com/tomorisakura/aywa-pet/blob/master/assets/preview_screen.gif)
+
 ___
 
 ## LICENSE
