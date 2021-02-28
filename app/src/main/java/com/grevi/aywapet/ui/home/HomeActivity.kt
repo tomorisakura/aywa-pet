@@ -1,5 +1,6 @@
 package com.grevi.aywapet.ui.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -11,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.ActivityHomeBinding
 import com.grevi.aywapet.ui.base.BaseActivity
+import com.grevi.aywapet.ui.search.SearchActivity
 
 class HomeActivity : BaseActivity(){
 
@@ -33,7 +35,16 @@ class HomeActivity : BaseActivity(){
             when(destination.id) {
                 R.id.navigation_keep -> binding.searchCard.visibility = View.GONE
                 R.id.navigation_account -> binding.searchCard.visibility = View.GONE
-                R.id.navigation_home -> binding.searchCard.visibility = View.VISIBLE
+                R.id.navigation_home -> {
+                    with(binding) {
+                        searchCard.visibility = View.VISIBLE
+                        searchCard.setOnClickListener {
+                            Intent(this@HomeActivity, SearchActivity::class.java).apply {
+                                startActivity(this)
+                            }
+                        }
+                    }
+                }
             }
         }
     }

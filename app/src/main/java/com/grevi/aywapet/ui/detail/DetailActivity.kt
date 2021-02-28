@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
+import com.google.android.material.appbar.AppBarLayout
 import com.grevi.aywapet.databinding.ActivityDetailBinding
 import com.grevi.aywapet.ui.base.BaseActivity
 import com.grevi.aywapet.ui.detail.adapter.PicturesAdapter
@@ -38,13 +39,25 @@ class DetailActivity : BaseActivity() {
         initView()
     }
 
-    private fun initView() {
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
+    private fun initView() = with(binding) {
         picturesAdapter = PicturesAdapter()
         snapHelper = LinearSnapHelper()
         pagerSnapHelper = PagerSnapHelper()
         val id = intent.getStringExtra(PET_ID).toString()
 
-        petViewModel.getPet(id).observe(this, { response ->
+        appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            when {
+                appBarLayout.totalScrollRange + verticalOffset == 0 -> supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                else -> supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            }
+        })
+
+        petViewModel.getPet(id).observe(this@DetailActivity, { response ->
             when(response.status) {
                 Resource.STATUS.LOADING -> {
                     with(binding) {
@@ -54,37 +67,35 @@ class DetailActivity : BaseActivity() {
                     }
                 }
                 Resource.STATUS.EXCEPTION -> Log.e(TAG, response.msg!!)
-                Resource.STATUS.ERROR -> snackBar(binding.root, response.msg!!).show()
+                Resource.STATUS.ERROR -> snackBar(root, response.msg!!).show()
                 Resource.STATUS.SUCCESS -> {
 
                     response.data?.result?.let { pet ->
-                        with(binding) {
-                            appbar.visibility = View.VISIBLE
-                            pgLoading.visibility = View.GONE
-                            groupView.visibility = View.VISIBLE
-                            btnAdopt.visibility = View.VISIBLE
-                            supportActionBar?.title = pet.petName
-                            supportActionBar?.subtitle = "Owner Lama ${pet.oldOwner}"
-                            picturesAdapter.addItem(pet.pictures)
-                            tvClinicName.text = pet.clinicId.name
-                            tvAddressClinic.text = pet.clinicId.address
-                            vaccinePet.text = pet.vaccine
-                            typePet.text = pet.types.jenis
-                            genderPet.text = pet.gender
-                            weightPet.text = pet.weight
-                            rasPet.text = pet.ras
-                            agePet.text = pet.age
-                            tvInfo.text = pet.info
+                        appbar.visibility = View.VISIBLE
+                        pgLoading.visibility = View.GONE
+                        groupView.visibility = View.VISIBLE
+                        btnAdopt.visibility = View.VISIBLE
+                        supportActionBar?.title = pet.petName
+                        supportActionBar?.subtitle = "Owner Lama ${pet.oldOwner}"
+                        picturesAdapter.addItem(pet.pictures)
+                        tvClinicName.text = pet.clinicId.name
+                        tvAddressClinic.text = pet.clinicId.address
+                        vaccinePet.text = pet.vaccine
+                        typePet.text = pet.types.jenis
+                        genderPet.text = pet.gender
+                        weightPet.text = pet.weight
+                        rasPet.text = pet.ras
+                        agePet.text = pet.age
+                        tvInfo.text = pet.info
 
-                            rvPhotos.setHasFixedSize(true)
-                            rvPhotos.layoutManager = LinearLayoutManager(this@DetailActivity, LinearLayoutManager.HORIZONTAL, false)
-                            rvPhotos.adapter = picturesAdapter
-                            snapHelper.attachToRecyclerView(rvPhotos)
-                            indicator.attachToRecyclerView(rvPhotos, pagerSnapHelper)
+                        rvPhotos.setHasFixedSize(true)
+                        rvPhotos.layoutManager = LinearLayoutManager(this@DetailActivity, LinearLayoutManager.HORIZONTAL, false)
+                        rvPhotos.adapter = picturesAdapter
+                        snapHelper.attachToRecyclerView(rvPhotos)
+                        indicator.attachToRecyclerView(rvPhotos, pagerSnapHelper)
 
-                            btnAdopt.setOnClickListener {
-                                observeChecker(pet.id)
-                            }
+                        btnAdopt.setOnClickListener {
+                            observeChecker(pet.id)
                         }
                     }
                 }

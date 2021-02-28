@@ -20,5 +20,6 @@ interface Repository {
     suspend fun getProvince() : Resource<ProvinceResponse>
     suspend fun getDistrict(id : String) : Resource<KabupatenResponse>
     suspend fun getSubDistrict(id : String) : Resource<KecamatanResponse>
+    suspend fun getSearchPet(ras : String) : Resource<PetResponse>
     suspend fun createFlow(name: String, phone: String, alamat: String, email: String, uid: String) : Flow<PostUserResponse>
 }

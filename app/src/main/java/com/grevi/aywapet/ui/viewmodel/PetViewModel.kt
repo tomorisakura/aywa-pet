@@ -50,4 +50,17 @@ class PetViewModel @Inject constructor(private val repositoryImpl: RepositoryImp
         return _petDetailData
     }
 
+    fun getSearchPet(ras : String) : LiveData<Resource<PetResponse>> {
+        viewModelScope.launch {
+            val data = repositoryImpl.getSearchPet(ras)
+            try {
+                data.data?.let { _petData.postValue(Resource.success(data = it)) }
+            } catch (e : Exception) {
+                e.printStackTrace()
+                _petData.postValue(Resource.error(msg = e.toString()))
+            }
+        }
+        return _petData
+    }
+
 }

@@ -48,4 +48,7 @@ interface ApiService {
 
     @GET("/api/kecamatan/{id}")
     suspend fun getKecamatan(@Path("id") id : String) : Response<KecamatanResponse>
+
+    @GET("/api/pet/search")
+    suspend fun getSearchPet(@Header("x-access-token") token: String, @Query("ras") ras : String) : Response<PetResponse>
 }

@@ -17,5 +17,6 @@ interface ApiHelper {
     suspend fun getProvince() : Response<ProvinceResponse>
     suspend fun getDistrict(id : String) : Response<KabupatenResponse>
     suspend fun getSubDistrict(id : String) : Response<KecamatanResponse>
+    suspend fun getSearchPet(token: String, ras : String) : Response<PetResponse>
     suspend fun createUserFlow(name : String, phone : String, alamat : String, email : String, uid : String) : Flow<Response<PostUserResponse>>
 }

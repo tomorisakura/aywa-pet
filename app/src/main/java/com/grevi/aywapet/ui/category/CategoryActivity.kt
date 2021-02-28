@@ -13,6 +13,7 @@ import com.grevi.aywapet.ui.detail.DetailActivity
 import com.grevi.aywapet.ui.viewmodel.CategoryViewModel
 import com.grevi.aywapet.utils.Constant.CATEGORY_ID
 import com.grevi.aywapet.utils.Constant.CATEGORY_NAME
+import com.grevi.aywapet.utils.Constant.PET_ID
 import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.snackBar
 
@@ -20,7 +21,7 @@ class CategoryActivity : BaseActivity() {
 
     private lateinit var binding : ActivityCategoryBinding
     private val categoryViewModel : CategoryViewModel by viewModels()
-    private lateinit var categoryAdapter: CategoryAdapter
+    private val categoryAdapter: CategoryAdapter by lazy { CategoryAdapter() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +43,6 @@ class CategoryActivity : BaseActivity() {
     }
 
     private fun initView(id : String, name : String) = with(binding) {
-        categoryAdapter = CategoryAdapter()
         categoryViewModel.getPetByType(id).observe(this@CategoryActivity, { resp ->
             when(resp.status) {
                 Resource.STATUS.LOADING -> resp.msg?.let { snackBar(root, it).show() }
@@ -61,7 +61,8 @@ class CategoryActivity : BaseActivity() {
                             categoryAdapter.addItem(it)
                             categoryAdapter.itemClickHelper = {
                                 Intent(this@CategoryActivity, DetailActivity::class.java).apply {
-                                    putExtra("petId", it.id)
+                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                    putExtra(PET_ID, it.id)
                                     startActivity(this)
                                 }
                             }

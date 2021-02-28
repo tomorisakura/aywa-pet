@@ -92,6 +92,11 @@ class RepositoryImpl @Inject constructor(private val apiHelperImpl: ApiHelperImp
     override suspend fun getProvince(): Resource<ProvinceResponse> = apiResponse { apiHelperImpl.getProvince() }
     override suspend fun getDistrict(id: String): Resource<KabupatenResponse> = apiResponse { apiHelperImpl.getDistrict(id) }
     override suspend fun getSubDistrict(id: String): Resource<KecamatanResponse> = apiResponse { apiHelperImpl.getSubDistrict(id) }
+    override suspend fun getSearchPet(ras: String): Resource<PetResponse> {
+        var token : String? = null
+        databaseHelperImpl.getUser().collect { data -> data.map { token = it.token } }
+        return apiResponse { apiHelperImpl.getSearchPet(token!!, ras) }
+    }
 
     override suspend fun createFlow(name: String, phone: String, alamat: String, email: String, uid: String): Flow<PostUserResponse> {
         return flow {

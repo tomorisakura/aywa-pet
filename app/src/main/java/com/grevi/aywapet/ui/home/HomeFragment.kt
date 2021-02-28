@@ -30,9 +30,8 @@ class HomeFragment : Fragment() {
     private lateinit var binding: FragmentHomeBinding
     private val categoryViewModel: CategoryViewModel by viewModels()
     private val petViewModel: PetViewModel by viewModels()
-
-    private lateinit var typesAdapter: TypesAdapter
-    private lateinit var petsAdapter: PetsAdapter
+    private val typesAdapter: TypesAdapter by lazy { TypesAdapter() }
+    private val petsAdapter: PetsAdapter by lazy { PetsAdapter() }
 
     private lateinit var navController: NavController
 
@@ -69,9 +68,6 @@ class HomeFragment : Fragment() {
     }
 
     private fun initTypes() = with(binding) {
-        typesAdapter = TypesAdapter()
-        petsAdapter = PetsAdapter()
-
         categoryViewModel.animalData.observe(viewLifecycleOwner, { response ->
             when (response.status) {
                 Resource.STATUS.LOADING -> {

@@ -46,6 +46,8 @@ class ApiHelperImpl @Inject constructor(private val apiService: ApiService) : Ap
     override suspend fun getProvince(): Response<ProvinceResponse> = apiService.getProvince()
     override suspend fun getDistrict(id: String): Response<KabupatenResponse> = apiService.getKabupaten(id)
     override suspend fun getSubDistrict(id: String): Response<KecamatanResponse> = apiService.getKecamatan(id)
+    override suspend fun getSearchPet(token: String, ras: String): Response<PetResponse> = apiService.getSearchPet(token, ras)
+
     override suspend fun createUserFlow(name: String, phone: String, alamat: String, email: String, uid: String): Flow<Response<PostUserResponse>> {
         return flow { apiService.createUser(name, phone, alamat, email, uid) }
     }
