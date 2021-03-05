@@ -10,13 +10,22 @@
 This a final exam to reach a bachelor degree 🧙‍♂️
 
 This project dedicate for Aywa Pet Clinic Yogyakarta to help them find a adopter who want to take care of stray pet like cat or etc in their clinic. this app maintained by me and always getting some little update.
+
+if you have trouble in registration using google auth, thats trouble from my cheap shared host
+
+[![Aywa Pet](https://img.shields.io/badge/AywaPet🐈-APK-black.svg?style=for-the-badge&logo=android)](https://github.com/tomorisakura/aywa-pet/blob/master/assets/app-debug.apk)
 ___
 
 ## Preview
 
 **Alpha Version**
 
-<img src="https://github.com/tomorisakura/aywa-pet/blob/master/assets/preview_screen.gif" width="230" height="400"/>
+<table>
+  <tr>
+    <td><img src="https://github.com/tomorisakura/aywa-pet/blob/master/assets/preview_screen.gif" width="230" height="400"/></td>
+    <td><img src="https://github.com/tomorisakura/aywa-pet/blob/master/assets/summary.png" width="700"/></td>
+  </tr>
+</table>
 
 ___
 
