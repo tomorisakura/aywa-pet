@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,18 +11,15 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.FragmentRegisBinding
 import com.grevi.aywapet.ui.home.HomeActivity
 import com.grevi.aywapet.ui.viewmodel.RegisterViewModel
 import com.grevi.aywapet.utils.RegisHelper
-import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.State
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class RegisFragment : Fragment(), RegisHelper {
@@ -66,33 +62,32 @@ class RegisFragment : Fragment(), RegisHelper {
 
         txlName.editText?.setText(args.name)
 
-        registerViewModel.province.observe(viewLifecycleOwner, { resp ->
-            when(resp.status) {
-                Resource.STATUS.LOADING -> snackBar(binding.root, resp.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(binding.root, resp.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(binding.root, resp.msg!!).show()
-                Resource.STATUS.SUCCESS -> {
+        registerViewModel.province.observe(viewLifecycleOwner, { state ->
+            when(state) {
+                is State.Loading -> snackBar(root, state.msg).show()
+                is State.Error -> snackBar(root, state.exception.toString()).show()
+                is State.Success -> {
                     provinceList.clear()
-                    resp.data?.result?.forEach {
+                    state.data.result.forEach {
                         provinceMap[it.id] = it.name
                         provinceList.add(it.name)
                     }
                     val adapter = ArrayAdapter(requireContext(), R.layout.list_item_spinner, R.id.tv_spinner, provinceList)
                     provinceSpinner.setAdapter(adapter)
                 }
+                else -> Unit
             }
         })
 
         provinceSpinner.setOnItemClickListener { _, _, position, _ ->
             provinceMap.filterValues { it == provinceList[position] }.keys.map {
-                registerViewModel.getDistrict(it).observe(viewLifecycleOwner, { resp ->
-                    when(resp.status) {
-                        Resource.STATUS.LOADING -> snackBar(binding.root, resp.msg!!).show()
-                        Resource.STATUS.ERROR -> snackBar(binding.root, resp.msg!!).show()
-                        Resource.STATUS.EXCEPTION -> snackBar(binding.root, resp.msg!!).show()
-                        Resource.STATUS.SUCCESS -> {
+                registerViewModel.getDistrict(it).observe(viewLifecycleOwner, { state ->
+                    when(state) {
+                        is State.Loading -> snackBar(root, state.msg).show()
+                        is State.Error -> snackBar(root, state.exception.toString()).show()
+                        is State.Success -> {
                             districtList.clear()
-                            resp.data?.result?.forEach { data ->
+                            state.data.result.forEach { data ->
                                 districtMap[data.id] = data.name
                                 districtList.add(data.name)
                             }
@@ -100,6 +95,7 @@ class RegisFragment : Fragment(), RegisHelper {
                             val adapter = ArrayAdapter(requireContext(), R.layout.list_item_spinner, R.id.tv_spinner, districtList)
                             districtSpinner.setAdapter(adapter)
                         }
+                        else -> Unit
                     }
                 })
             }
@@ -107,14 +103,13 @@ class RegisFragment : Fragment(), RegisHelper {
 
         districtSpinner.setOnItemClickListener { _, _, position, _ ->
             districtMap.filterValues { it == districtList[position] }.keys.map {
-                registerViewModel.getSubDistrict(it).observe(viewLifecycleOwner, { resp ->
-                    when(resp.status) {
-                        Resource.STATUS.LOADING -> snackBar(binding.root, resp.msg!!).show()
-                        Resource.STATUS.ERROR -> snackBar(binding.root, resp.msg!!).show()
-                        Resource.STATUS.EXCEPTION -> snackBar(binding.root, resp.msg!!).show()
-                        Resource.STATUS.SUCCESS -> {
+                registerViewModel.getSubDistrict(it).observe(viewLifecycleOwner, { state ->
+                    when(state) {
+                        is State.Loading -> snackBar(root, state.msg).show()
+                        is State.Error -> snackBar(root, state.exception.toString()).show()
+                        is State.Success -> {
                             subDistrictList.clear()
-                            resp.data?.result?.forEach { data ->
+                            state.data.result.forEach { data ->
                                 subDistrictMap[data.id] = data.name
                                 subDistrictList.add(data.name)
                             }
@@ -122,6 +117,7 @@ class RegisFragment : Fragment(), RegisHelper {
                             val adapter = ArrayAdapter(requireContext(), R.layout.list_item_spinner, R.id.tv_spinner, subDistrictList)
                             subDistrictSpinner.setAdapter(adapter)
                         }
+                        else -> Unit
                     }
                 })
             }

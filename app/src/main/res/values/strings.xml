@@ -19,4 +19,5 @@
     <string name="terms3">Memberikan Waktu Bermain Bersama Dengan Hewan Peliharaan</string>
     <string name="terms4">Tidak Boleh Diperjual Belikan</string>
     <string name="regist_text">Registrasi Akun</string>
+    <string name="lost_network_text">Koneksi Internet Terputus, Coba Lagi 😪</string>
 </resources>

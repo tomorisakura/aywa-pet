@@ -25,6 +25,7 @@
             android:layout_height="40dp"
             android:hint="Cari Ras Kucing ?"
             android:inputType="text"
+            android:fontFamily="@font/work_sans"
             android:imeOptions="actionSearch"
             android:layout_margin="10dp"
             android:padding="10dp"

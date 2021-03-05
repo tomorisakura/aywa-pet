@@ -23,6 +23,7 @@ class CategoryAdapter : RecyclerView.Adapter<CategoryAdapter.CategoryVH>() {
                 petsRas.text = pets.ras
                 province.text = provSplit[2]
                 Glide.with(this.root).load("${Constant.BASE_URL}/${pets.pictures[0].picUrl}").into(petsPic)
+                root.setOnClickListener { itemClickHelper?.invoke(pets) }
             }
         }
     }
@@ -40,7 +41,6 @@ class CategoryAdapter : RecyclerView.Adapter<CategoryAdapter.CategoryVH>() {
 
     override fun onBindViewHolder(holder: CategoryVH, position: Int) {
         holder.bind(petsList[position])
-        holder.itemView.setOnClickListener { itemClickHelper?.invoke(petsList[position]) }
     }
 
     override fun getItemCount(): Int = petsList.size

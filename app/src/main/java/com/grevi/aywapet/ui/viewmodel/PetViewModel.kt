@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.grevi.aywapet.datasource.response.PetDetailResponse
 import com.grevi.aywapet.datasource.response.PetResponse
 import com.grevi.aywapet.repository.RepositoryImpl
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.ApiException
+import com.grevi.aywapet.utils.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,49 +16,50 @@ import javax.inject.Inject
 @HiltViewModel
 class PetViewModel @Inject constructor(private val repositoryImpl: RepositoryImpl) : ViewModel() {
 
-    private val _petData = MutableLiveData<Resource<PetResponse>>()
-    private val _petDetailData = MutableLiveData<Resource<PetDetailResponse>>()
-    val petData : MutableLiveData<Resource<PetResponse>> get() = _petData
+    private val _petData = MutableLiveData<State<PetResponse>>()
+    private val _petDetailData = MutableLiveData<State<PetDetailResponse>>()
+    val petData : MutableLiveData<State<PetResponse>> get() = _petData
 
     init {
         getAllPet()
     }
 
-    private fun getAllPet() : LiveData<Resource<PetResponse>> {
+    private fun getAllPet() : LiveData<State<PetResponse>> {
         viewModelScope.launch {
             val data = repositoryImpl.getAllPet()
-            _petData.postValue(Resource.loading(msg = "Memuat data..."))
+            _petData.postValue(State.Loading())
             try {
-                data.data?.let { _petData.postValue(Resource.success(data = it)) }
-            } catch (e : Exception) {
+                _petData.postValue(data)
+            } catch (e : ApiException) {
                 e.printStackTrace()
-                _petData.postValue(Resource.error(msg = e.toString()))
+                _petData.postValue(State.Error(e))
             }
         }
         return _petData
     }
 
-    internal fun getPet(id : String) : LiveData<Resource<PetDetailResponse>> {
+    internal fun getPet(id : String) : LiveData<State<PetDetailResponse>> {
         viewModelScope.launch {
             val data = repositoryImpl.getPet(id)
-            _petDetailData.postValue(Resource.loading(msg = "Memuat data..."))
+            _petDetailData.postValue(State.Loading())
             try {
-                data.data?.let { _petDetailData.postValue(Resource.success(data = it)) }
-            } catch (e : Exception) {
-                _petDetailData.postValue(Resource.error(msg = e.toString()))
+                _petDetailData.postValue(data)
+            } catch (e : ApiException) {
+                _petDetailData.postValue(State.Error(e))
             }
         }
         return _petDetailData
     }
 
-    fun getSearchPet(ras : String) : LiveData<Resource<PetResponse>> {
+    fun getSearchPet(ras : String) : LiveData<State<PetResponse>> {
         viewModelScope.launch {
             val data = repositoryImpl.getSearchPet(ras)
+            _petData.postValue(State.Loading())
             try {
-                data.data?.let { _petData.postValue(Resource.success(data = it)) }
-            } catch (e : Exception) {
+                _petData.postValue(data)
+            } catch (e : ApiException) {
                 e.printStackTrace()
-                _petData.postValue(Resource.error(msg = e.toString()))
+                _petData.postValue(State.Error(e))
             }
         }
         return _petData

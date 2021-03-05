@@ -23,7 +23,8 @@ import com.grevi.aywapet.databinding.FragmentLoginBinding
 import com.grevi.aywapet.ui.home.HomeActivity
 import com.grevi.aywapet.ui.viewmodel.RegisterViewModel
 import com.grevi.aywapet.utils.Constant.RC_SIGN
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.NetworkUtils
+import com.grevi.aywapet.utils.State
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,6 +38,7 @@ class LoginFragment : Fragment() {
     private lateinit var googleSignClient : GoogleSignInClient
     private lateinit var googleSignOptions : GoogleSignInOptions
     private lateinit var fbAuth : FirebaseAuth
+    private val networkUtils: NetworkUtils by lazy { NetworkUtils(requireContext()) }
 
     private val TAG = LoginFragment::class.java.simpleName
 
@@ -52,9 +54,19 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-        configureSignSetting()
-        initView()
+        observeNetwork()
         fbAuth = FirebaseAuth.getInstance()
+    }
+
+    private fun observeNetwork() = with(binding) {
+        networkUtils.networkStatus.observe(viewLifecycleOwner) {
+            if (it) {
+                configureSignSetting()
+                initView()
+            }else {
+                snackBar(root, getString(R.string.lost_network_text)).show()
+            }
+        }
     }
 
     private fun initView() {
@@ -114,19 +126,15 @@ class LoginFragment : Fragment() {
     }
 
     private fun observeViewModel(email : String, name : String, uid : String) {
-        registerViewModel.getEmail(email).observe(viewLifecycleOwner, { response ->
-            when(response.status) {
-                Resource.STATUS.LOADING -> binding.btnLoginGoogle.isEnabled = false
-                Resource.STATUS.ERROR -> {
+        registerViewModel.getEmail(email).observe(viewLifecycleOwner, { state ->
+            when(state) {
+                is State.Loading -> binding.btnLoginGoogle.isEnabled = false
+                is State.Error -> {
                     binding.btnLoginGoogle.isEnabled = true
-                    snackBar(binding.root, response.msg!!).show()
+                    snackBar(binding.root, state.exception.toString()).show()
                 }
-                Resource.STATUS.EXCEPTION -> {
-                    binding.btnLoginGoogle.isEnabled = true
-                    snackBar(binding.root, response.msg!!).show()
-                }
-                Resource.STATUS.SUCCESS -> {
-                    response.data?.status?.let { status ->
+                is State.Success -> {
+                    state.data.status.let { status ->
                         if (status) {
                             Intent(requireActivity(), HomeActivity::class.java).apply {
                                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -138,6 +146,7 @@ class LoginFragment : Fragment() {
                         }
                     }
                 }
+                else -> print("")
             }
         })
     }

@@ -1,5 +1,6 @@
 package com.grevi.aywapet.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,64 +10,66 @@ import com.grevi.aywapet.datasource.response.KecamatanResponse
 import com.grevi.aywapet.datasource.response.ProvinceResponse
 import com.grevi.aywapet.datasource.response.VerifyResponse
 import com.grevi.aywapet.repository.RepositoryImpl
+import com.grevi.aywapet.utils.ApiException
 import com.grevi.aywapet.utils.RegisHelper
-import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.SharedUtils
+import com.grevi.aywapet.utils.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(private val repositoryImpl: RepositoryImpl, private val sharedUtils: SharedUtils) : ViewModel() {
 
-    private val _province = MutableLiveData<Resource<ProvinceResponse>>()
-    private val _district = MutableLiveData<Resource<KabupatenResponse>>()
-    private val _subDistrict = MutableLiveData<Resource<KecamatanResponse>>()
-    private val _emailVerify = MutableLiveData<Resource<VerifyResponse>>()
+    private val _province = MutableLiveData<State<ProvinceResponse>>()
+    private val _district = MutableLiveData<State<KabupatenResponse>>()
+    private val _subDistrict = MutableLiveData<State<KecamatanResponse>>()
+    private val _emailVerify = MutableLiveData<State<VerifyResponse>>()
     private val _loginState = MutableLiveData<Boolean>()
 
     var regisHelper : RegisHelper? = null
-    val province : MutableLiveData<Resource<ProvinceResponse>> get() = _province
+    val province : MutableLiveData<State<ProvinceResponse>> get() = _province
     val loginState : MutableLiveData<Boolean> get() = _loginState
+
+    private val TAG = RegisterViewModel::class.java.simpleName
 
     init {
         getProvince()
         getLoginState()
     }
 
-    private fun getProvince() : LiveData<Resource<ProvinceResponse>> {
+    private fun getProvince() : LiveData<State<ProvinceResponse>> {
         viewModelScope.launch {
             val data = repositoryImpl.getProvince()
             try {
-                data.data?.let { _province.postValue(Resource.success(data = it)) }
-            }catch (e : Exception) {
-                _province.postValue(Resource.error(null, e.toString()))
+                data.let { _province.postValue(data) }
+            }catch (e : ApiException) {
+                _province.postValue(State.Error(e))
             }
         }
         return _province
     }
 
-    fun getDistrict(id : String) : LiveData<Resource<KabupatenResponse>> {
+    fun getDistrict(id : String) : LiveData<State<KabupatenResponse>> {
         viewModelScope.launch {
             val data = repositoryImpl.getDistrict(id)
             try {
-                data.data?.let { _district.postValue(Resource.success(data = it)) }
-            }catch (e : Exception) {
-                _district.postValue(Resource.error(null, e.toString()))
+                _district.postValue(data)
+            }catch (e : ApiException) {
+                _district.postValue(State.Error(e))
             }
         }
         return _district
     }
 
-    fun getSubDistrict(id : String) : LiveData<Resource<KecamatanResponse>> {
+    fun getSubDistrict(id : String) : LiveData<State<KecamatanResponse>> {
         viewModelScope.launch {
             val data = repositoryImpl.getSubDistrict(id)
             try {
-                data.data?.let { _subDistrict.postValue(Resource.success(data = it)) }
-            }catch (e : Exception) {
-                _subDistrict.postValue(Resource.error(null, e.toString()))
+                _subDistrict.postValue(data)
+            }catch (e : ApiException) {
+                _subDistrict.postValue(State.Error(e))
             }
         }
         return _subDistrict
@@ -75,27 +78,33 @@ class RegisterViewModel @Inject constructor(private val repositoryImpl: Reposito
     fun createUser(name : String, phone : String, address : String, email : String, uid : String) {
         viewModelScope.launch {
             val remote = repositoryImpl.createUser(name, phone, address, email, uid)
-            remote.data?.let {
-                if (it.status) {
-                    delay(2000L)
-                    getEmail(email)
-                    regisHelper?.success()
+            remote.let {
+                when(it) {
+                    is State.Error -> Log.e(TAG, it.toString())
+                    is State.Success -> {
+                        if (it.data.status) {
+                            delay(2000L)
+                            getEmail(email)
+                            regisHelper?.success()
+                        }
+                    }
+                    else -> Log.i(TAG, "")
                 }
             }
         }
     }
 
-    fun getEmail(email: String) : LiveData<Resource<VerifyResponse>> {
+    fun getEmail(email: String) : LiveData<State<VerifyResponse>> {
         viewModelScope.launch {
             val remote = repositoryImpl.getEmailVerify(email)
-            _emailVerify.postValue(Resource.loading())
+            _emailVerify.postValue(State.Loading())
             try {
                 sharedUtils.setLoginKey()
                 sharedUtils.setUserKey(email)
-                remote.data?.let { _emailVerify.postValue(Resource.success(data = it)) }
-            }catch (e : Exception) {
+                _emailVerify.postValue(remote)
+            }catch (e : ApiException) {
                 e.printStackTrace()
-                _emailVerify.postValue(Resource.error(null, e.toString()))
+                _emailVerify.postValue(State.Error(e))
             }
         }
         return _emailVerify

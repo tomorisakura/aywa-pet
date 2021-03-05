@@ -2,24 +2,23 @@ package com.grevi.aywapet.repository
 
 import com.grevi.aywapet.datasource.response.*
 import com.grevi.aywapet.db.entity.Users
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.State
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 
 interface Repository {
-    suspend fun getAllPet() : Resource<PetResponse>
-    suspend fun getAnimal() : Resource<AnimalResponse>
-    suspend fun getPet(id : String) : Resource<PetDetailResponse>
-    suspend fun getEmailVerify(email : String) : Resource<VerifyResponse>
-    suspend fun createUser(name: String, phone: String, alamat: String, email: String, uid: String) : Resource<PostUserResponse>
-    suspend fun getKeepPet(idUsers : String) : Resource<GetKeepResponse>
-    suspend fun keepPost(idPet : String, idUsers : String) : Resource<KeepPostResponse>
-    suspend fun getKeepSuccess(idUsers: String) : Resource<GetKeepSuccessResponse>
-    suspend fun getPetByType(idType : String) : Resource<PetResponse>
+    suspend fun getAllPet() : State<PetResponse>
+    suspend fun getAnimal() : State<AnimalResponse>
+    suspend fun getPet(id : String) : State<PetDetailResponse>
+    suspend fun getEmailVerify(email : String) : State<VerifyResponse>
+    suspend fun createUser(name: String, phone: String, alamat: String, email: String, uid: String) : State<PostUserResponse>
+    suspend fun getKeepPet(idUsers : String) : State<GetKeepResponse>
+    suspend fun keepPost(idPet : String, idUsers : String) : State<KeepPostResponse>
+    suspend fun getKeepSuccess(idUsers: String) : State<GetKeepSuccessResponse>
+    suspend fun getPetByType(idType : String) : State<PetResponse>
     suspend fun getLocalUser() : Flow<MutableList<Users>>
-    suspend fun getProvince() : Resource<ProvinceResponse>
-    suspend fun getDistrict(id : String) : Resource<KabupatenResponse>
-    suspend fun getSubDistrict(id : String) : Resource<KecamatanResponse>
-    suspend fun getSearchPet(ras : String) : Resource<PetResponse>
+    suspend fun getProvince() : State<ProvinceResponse>
+    suspend fun getDistrict(id : String) : State<KabupatenResponse>
+    suspend fun getSubDistrict(id : String) : State<KecamatanResponse>
+    suspend fun getSearchPet(ras : String) : State<PetResponse>
     suspend fun createFlow(name: String, phone: String, alamat: String, email: String, uid: String) : Flow<PostUserResponse>
 }

@@ -23,7 +23,8 @@ import com.grevi.aywapet.ui.viewmodel.KeepViewModel
 import com.grevi.aywapet.ui.viewmodel.PetViewModel
 import com.grevi.aywapet.utils.Constant
 import com.grevi.aywapet.utils.Constant.TIMER_BR
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.NetworkUtils
+import com.grevi.aywapet.utils.State
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,7 +34,8 @@ class KeepFragment : Fragment() {
     private lateinit var binding : FragmentKeepBinding
     private val keepViewModel : KeepViewModel by viewModels()
     private val petViewModel : PetViewModel by viewModels()
-    private lateinit var keepAdapter: KeepAdapter
+    private val keepAdapter: KeepAdapter by lazy { KeepAdapter() }
+    private val networkUtils: NetworkUtils by lazy { NetworkUtils(requireContext()) }
     private lateinit var intentFilter: IntentFilter
 
     private val TAG = KeepFragment::class.java.simpleName
@@ -51,41 +53,51 @@ class KeepFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         intentFilter = IntentFilter(TIMER_BR)
         setHasOptionsMenu(true)
-        initView()
+        observeNetwork()
+    }
+
+    private fun observeNetwork() = with(binding) {
+        networkUtils.networkStatus.observe(viewLifecycleOwner) { isConnect ->
+            if (isConnect) {
+                initView()
+            }else{
+                snackBar(root, getString(R.string.lost_network_text)).show()
+            }
+        }
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.notif).isVisible = false
         menu.findItem(R.id.edit_account).isVisible = false
+        menu.findItem(R.id.search).isVisible = false
     }
 
     private fun initView() = with(binding) {
-        keepAdapter = KeepAdapter()
-        keepViewModel.keepData.observe(viewLifecycleOwner, { response ->
-            when(response.status) {
-                Resource.STATUS.LOADING -> snackBar(root, response.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(root, response.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(root, response.msg!!).show()
-                Resource.STATUS.SUCCESS -> {
-                    response.data?.let {
+        keepViewModel.keepData.observe(viewLifecycleOwner, { state ->
+            when(state) {
+                is State.Loading -> snackBar(root, state.msg).show()
+                is State.Error -> snackBar(root, state.exception.toString()).show()
+                is State.Success -> {
+                    state.data.let {
                         if (it.result.isNullOrEmpty()) {
                             activity?.stopService(Intent(activity, TimerService::class.java))
                             snackBar(root, "kosong").show()
                         } else {
                             keepAdapter.addItem(it.result)
-                            rvKeep.setHasFixedSize(true)
-                            rvKeep.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
-                            rvKeep.adapter = keepAdapter
+                            rvKeep.apply {
+                                setHasFixedSize(true)
+                                layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+                                adapter = keepAdapter
+                            }
                             keepAdapter.onItemClick = { keep ->
                                 BottomSheetBehavior.from(bottomSheet).also { bottomSheet ->
-                                    petViewModel.getPet(keep.petId.id).observe(viewLifecycleOwner, { resp ->
-                                        when(resp.status) {
-                                            Resource.STATUS.ERROR -> Log.e(TAG, resp.msg!!)
-                                            Resource.STATUS.LOADING -> Log.i(TAG, resp.msg!!)
-                                            Resource.STATUS.EXCEPTION -> Log.e(TAG, resp.msg!!)
-                                            Resource.STATUS.SUCCESS -> {
-                                                resp.data?.result?.let { pet ->
+                                    petViewModel.getPet(keep.petId.id).observe(viewLifecycleOwner, { state ->
+                                        when(state) {
+                                            is State.Loading -> Log.i(TAG, state.msg)
+                                            is State.Error -> Log.e(TAG, state.exception.toString())
+                                            is State.Success -> {
+                                                state.data.result.let { pet ->
                                                     Glide.with(root).load("${Constant.BASE_URL}/${pet.pictures[0].picUrl}").into(sheetImage)
                                                     sheetPetName.text = pet.petName
                                                     sheetTypePet.text = pet.types.jenis
@@ -93,6 +105,7 @@ class KeepFragment : Fragment() {
                                                     sheetAddress.text = pet.clinicId.address
                                                 }
                                             }
+                                            else -> Unit
                                         }
                                     })
                                     bottomSheet.state = BottomSheetBehavior.STATE_EXPANDED
@@ -101,6 +114,7 @@ class KeepFragment : Fragment() {
                         }
                     }
                 }
+                else -> Unit
             }
         })
 

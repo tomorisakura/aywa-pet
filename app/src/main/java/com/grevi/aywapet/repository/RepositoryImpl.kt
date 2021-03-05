@@ -7,13 +7,11 @@ import com.grevi.aywapet.datasource.services.ApiHelperImpl
 import com.grevi.aywapet.db.DatabaseHelperImpl
 import com.grevi.aywapet.db.entity.Users
 import com.grevi.aywapet.repository.mapper.EntityMapperImpl
-import com.grevi.aywapet.utils.Resource
 import com.grevi.aywapet.utils.SharedUtils
-import kotlinx.coroutines.delay
+import com.grevi.aywapet.utils.State
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
-import retrofit2.Response
 import javax.inject.Inject
 
 class RepositoryImpl @Inject constructor(private val apiHelperImpl: ApiHelperImpl, private val databaseHelperImpl: DatabaseHelperImpl,
@@ -21,25 +19,25 @@ class RepositoryImpl @Inject constructor(private val apiHelperImpl: ApiHelperImp
 
     private val TAG = RepositoryImpl::class.java.simpleName
 
-    override suspend fun getAllPet() : Resource<PetResponse> {
+    override suspend fun getAllPet() : State<PetResponse> {
         var token : String? = null
         databaseHelperImpl.getUser().collect { data -> data.map { token = it.token } }
         return apiResponse { apiHelperImpl.getPet(token!!) }
     }
 
-    override suspend fun getAnimal() : Resource<AnimalResponse> {
+    override suspend fun getAnimal() : State<AnimalResponse> {
         var token : String? = null
         databaseHelperImpl.getUser().collect { data -> data.map { token = it.token } }
         return apiResponse { apiHelperImpl.getAnimal(token!!) }
     }
 
-    override suspend fun getPet(id : String) : Resource<PetDetailResponse> {
+    override suspend fun getPet(id : String) : State<PetDetailResponse> {
         var token : String? = null
         databaseHelperImpl.getUser().collect { data -> data.map { token = it.token } }
         return apiResponse { apiHelperImpl.getPetDetail(token!!, id) }
     }
 
-    override suspend fun getEmailVerify(email : String) : Resource<VerifyResponse> {
+    override suspend fun getEmailVerify(email : String) : State<VerifyResponse> {
         return apiResponse { apiHelperImpl.getEmailVerify(email).also {
             val data = it.body()?.result ?: return@also
             val token = it.body()?.token ?: return@also
@@ -50,7 +48,7 @@ class RepositoryImpl @Inject constructor(private val apiHelperImpl: ApiHelperImp
         } }
     }
 
-    override suspend fun createUser(name: String, phone: String, alamat: String, email: String, uid: String) : Resource<PostUserResponse> {
+    override suspend fun createUser(name: String, phone: String, alamat: String, email: String, uid: String) : State<PostUserResponse> {
         return apiResponse { apiHelperImpl.createUser(name, phone, alamat, email, uid).also {
             val data = it.body()?.result ?: return@also
             val token = it.body()?.token ?: return@also
@@ -61,25 +59,25 @@ class RepositoryImpl @Inject constructor(private val apiHelperImpl: ApiHelperImp
         } }
     }
 
-    override suspend fun getKeepPet(idUsers : String) : Resource<GetKeepResponse> {
+    override suspend fun getKeepPet(idUsers : String) : State<GetKeepResponse> {
         var token : String? = null
         databaseHelperImpl.getUser().collect { data -> data.map { token = it.token } }
         return apiResponse { apiHelperImpl.getKeepPet(token!!, idUsers) }
     }
 
-    override suspend fun keepPost(idPet : String, idUsers : String) : Resource<KeepPostResponse> {
+    override suspend fun keepPost(idPet : String, idUsers : String) : State<KeepPostResponse> {
         var token : String? = null
         databaseHelperImpl.getUser().collect { data -> data.map { token = it.token } }
         return apiResponse { apiHelperImpl.postKeep(token!!, idPet, idUsers) }
     }
 
-    override suspend fun getKeepSuccess(idUsers: String) : Resource<GetKeepSuccessResponse> {
+    override suspend fun getKeepSuccess(idUsers: String) : State<GetKeepSuccessResponse> {
         var token : String? = null
         databaseHelperImpl.getUser().collect { data -> data.map { token = it.token } }
         return apiResponse { apiHelperImpl.getKeepSuccess(token!!, idUsers) }
     }
 
-    override suspend fun getPetByType(idType : String) : Resource<PetResponse> {
+    override suspend fun getPetByType(idType : String) : State<PetResponse> {
         var token : String? = null
         databaseHelperImpl.getUser().collect { data -> data.map { token = it.token } }
         return apiResponse { apiHelperImpl.getPetByType(token!!, idType) }
@@ -89,10 +87,10 @@ class RepositoryImpl @Inject constructor(private val apiHelperImpl: ApiHelperImp
         return databaseHelperImpl.getUser()
     }
 
-    override suspend fun getProvince(): Resource<ProvinceResponse> = apiResponse { apiHelperImpl.getProvince() }
-    override suspend fun getDistrict(id: String): Resource<KabupatenResponse> = apiResponse { apiHelperImpl.getDistrict(id) }
-    override suspend fun getSubDistrict(id: String): Resource<KecamatanResponse> = apiResponse { apiHelperImpl.getSubDistrict(id) }
-    override suspend fun getSearchPet(ras: String): Resource<PetResponse> {
+    override suspend fun getProvince(): State<ProvinceResponse> = apiResponse { apiHelperImpl.getProvince() }
+    override suspend fun getDistrict(id: String): State<KabupatenResponse> = apiResponse { apiHelperImpl.getDistrict(id) }
+    override suspend fun getSubDistrict(id: String): State<KecamatanResponse> = apiResponse { apiHelperImpl.getSubDistrict(id) }
+    override suspend fun getSearchPet(ras: String): State<PetResponse> {
         var token : String? = null
         databaseHelperImpl.getUser().collect { data -> data.map { token = it.token } }
         return apiResponse { apiHelperImpl.getSearchPet(token!!, ras) }

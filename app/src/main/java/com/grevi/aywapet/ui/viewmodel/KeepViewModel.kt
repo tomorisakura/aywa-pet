@@ -8,7 +8,8 @@ import com.grevi.aywapet.datasource.response.GetKeepResponse
 import com.grevi.aywapet.datasource.response.GetKeepSuccessResponse
 import com.grevi.aywapet.datasource.response.KeepPostResponse
 import com.grevi.aywapet.repository.RepositoryImpl
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.ApiException
+import com.grevi.aywapet.utils.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -17,28 +18,28 @@ import javax.inject.Inject
 @HiltViewModel
 class KeepViewModel @Inject constructor(private val repositoryImpl: RepositoryImpl) : ViewModel() {
 
-    private val _keepDataResp = MutableLiveData<Resource<GetKeepResponse>>()
-    private val _keepPostData = MutableLiveData<Resource<KeepPostResponse>>()
-    private val _keepSuccessData = MutableLiveData<Resource<GetKeepSuccessResponse>>()
+    private val _keepDataResp = MutableLiveData<State<GetKeepResponse>>()
+    private val _keepPostData = MutableLiveData<State<KeepPostResponse>>()
+    private val _keepSuccessData = MutableLiveData<State<GetKeepSuccessResponse>>()
 
-    val keepData : MutableLiveData<Resource<GetKeepResponse>> get() =  _keepDataResp
-    val keepSuccessData : MutableLiveData<Resource<GetKeepSuccessResponse>> get() = _keepSuccessData
+    val keepData : MutableLiveData<State<GetKeepResponse>> get() =  _keepDataResp
+    val keepSuccessData : MutableLiveData<State<GetKeepSuccessResponse>> get() = _keepSuccessData
 
     init {
         getKeepPet()
         getKeepSuccessKeep()
     }
 
-    internal fun keepPostData(idPet : String) : LiveData<Resource<KeepPostResponse>> {
+    internal fun keepPostData(idPet : String) : LiveData<State<KeepPostResponse>> {
         viewModelScope.launch {
             repositoryImpl.getLocalUser().collect { data ->
                 data.map {
                     val dataRemote = repositoryImpl.keepPost(idPet, it.id)
-                    _keepPostData.postValue(Resource.loading(msg = "Load"))
+                    _keepPostData.postValue(State.Loading())
                     try {
-                        _keepPostData.postValue(Resource.success(data = dataRemote.data!!))
-                    } catch (e : Exception) {
-                        _keepPostData.postValue(Resource.error(msg = e.toString()))
+                        _keepPostData.postValue(dataRemote)
+                    } catch (e : ApiException) {
+                        _keepPostData.postValue(State.Error(e))
                     }
                 }
             }
@@ -46,16 +47,16 @@ class KeepViewModel @Inject constructor(private val repositoryImpl: RepositoryIm
         return _keepPostData
     }
 
-    private fun getKeepPet() : LiveData<Resource<GetKeepResponse>> {
+    private fun getKeepPet() : LiveData<State<GetKeepResponse>> {
         viewModelScope.launch {
             repositoryImpl.getLocalUser().collect { data ->
                 data.map {
                     val dataRemote = repositoryImpl.getKeepPet(it.id)
-                    _keepDataResp.postValue(Resource.loading(msg = "Load"))
+                    _keepDataResp.postValue(State.Loading())
                     try {
-                        _keepDataResp.postValue(Resource.success(data = dataRemote.data!!))
-                    } catch (e : Exception) {
-                        _keepDataResp.postValue(Resource.error(msg = e.toString()))
+                        _keepDataResp.postValue(dataRemote)
+                    } catch (e : ApiException) {
+                        _keepDataResp.postValue(State.Error(e))
                     }
                 }
             }
@@ -63,16 +64,16 @@ class KeepViewModel @Inject constructor(private val repositoryImpl: RepositoryIm
         return _keepDataResp
     }
 
-    private fun getKeepSuccessKeep() : LiveData<Resource<GetKeepSuccessResponse>> {
+    private fun getKeepSuccessKeep() : LiveData<State<GetKeepSuccessResponse>> {
         viewModelScope.launch {
             repositoryImpl.getLocalUser().collect { data ->
                 data.map {
                     val dataRemote = repositoryImpl.getKeepSuccess(it.id)
-                    _keepSuccessData.postValue(Resource.loading(msg = "Load"))
+                    _keepSuccessData.postValue(State.Loading())
                     try {
-                        _keepSuccessData.postValue(Resource.success(data = dataRemote.data!!))
+                        _keepSuccessData.postValue(dataRemote)
                     } catch (e : Exception) {
-                        _keepSuccessData.postValue(Resource.error(msg = e.toString()))
+                        _keepSuccessData.postValue(State.Error(e))
                     }
                 }
             }

@@ -16,7 +16,7 @@ ___
 
 **Alpha Version**
 
-![](https://github.com/tomorisakura/aywa-pet/blob/master/assets/preview_screen.gif)
+<img src="https://github.com/tomorisakura/aywa-pet/blob/master/assets/preview_screen.gif" width="230" height="400"/>
 
 ___
 

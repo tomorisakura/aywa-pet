@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.grevi.aywapet.datasource.response.AnimalResponse
 import com.grevi.aywapet.datasource.response.PetResponse
 import com.grevi.aywapet.repository.RepositoryImpl
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.ApiException
+import com.grevi.aywapet.utils.State
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -15,39 +16,39 @@ import javax.inject.Inject
 @HiltViewModel
 class CategoryViewModel @Inject constructor(private val repositoryImpl: RepositoryImpl) : ViewModel() {
 
-    private val _petData = MutableLiveData<Resource<PetResponse>>()
-    private val _animalData = MutableLiveData<Resource<AnimalResponse>>()
+    private val _petData = MutableLiveData<State<PetResponse>>()
+    private val _animalData = MutableLiveData<State<AnimalResponse>>()
 
-    val animalData : MutableLiveData<Resource<AnimalResponse>> get() = _animalData
+    val animalData : MutableLiveData<State<AnimalResponse>> get() = _animalData
 
 
     init {
         getAnimal()
     }
 
-    internal fun getPetByType(idType : String) : LiveData<Resource<PetResponse>> {
+    internal fun getPetByType(idType : String) : LiveData<State<PetResponse>> {
         viewModelScope.launch {
             val data = repositoryImpl.getPetByType(idType)
-            _petData.postValue(Resource.loading(msg = "Memuat data..."))
+            _petData.postValue(State.Loading())
             try {
-                data.data?.let { _petData.postValue(Resource.success(data = it)) }
-            } catch (e : Exception) {
+                _petData.postValue(data)
+            } catch (e : ApiException) {
                 e.printStackTrace()
-                _petData.postValue(Resource.error(msg = e.toString()))
+                _petData.postValue(State.Error(e))
             }
         }
         return _petData
     }
 
-    private fun getAnimal() : LiveData<Resource<AnimalResponse>> {
+    private fun getAnimal() : LiveData<State<AnimalResponse>> {
         viewModelScope.launch {
             val data = repositoryImpl.getAnimal()
-            _animalData.postValue(Resource.loading(msg = "Memuat Kategori"))
+            _animalData.postValue(State.Loading())
             try {
-                data.data?.let { _animalData.postValue(Resource.success(data = it)) }
-            }catch (e : Exception) {
+                _animalData.postValue(data)
+            }catch (e : ApiException) {
                 e.printStackTrace()
-                _animalData.postValue(Resource.error(msg = e.toString()))
+                _animalData.postValue(State.Error(e))
             }
         }
         return _animalData

@@ -20,7 +20,8 @@ import com.grevi.aywapet.ui.viewmodel.PetViewModel
 import com.grevi.aywapet.utils.Constant.CATEGORY_ID
 import com.grevi.aywapet.utils.Constant.CATEGORY_NAME
 import com.grevi.aywapet.utils.Constant.PET_ID
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.NetworkUtils
+import com.grevi.aywapet.utils.State
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,7 +33,7 @@ class HomeFragment : Fragment() {
     private val petViewModel: PetViewModel by viewModels()
     private val typesAdapter: TypesAdapter by lazy { TypesAdapter() }
     private val petsAdapter: PetsAdapter by lazy { PetsAdapter() }
-
+    private val networkUtils : NetworkUtils by lazy { NetworkUtils(requireContext()) }
     private lateinit var navController: NavController
 
     override fun onCreateView(
@@ -48,12 +49,13 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         setHasOptionsMenu(true)
-        initTypes()
+        observeNetwork()
     }
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.edit_account).isVisible = false
+        menu.findItem(R.id.search).isVisible = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -67,73 +69,66 @@ class HomeFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun initTypes() = with(binding) {
-        categoryViewModel.animalData.observe(viewLifecycleOwner, { response ->
-            when (response.status) {
-                Resource.STATUS.LOADING -> {
+    private fun initView() = with(binding) {
+        categoryViewModel.animalData.observe(viewLifecycleOwner, { state ->
+            when (state) {
+                is State.Loading -> {
                     shimmer.visibility = View.VISIBLE
                     shimmer.startShimmer()
                     itemViewGroup.visibility = View.GONE
                 }
-                Resource.STATUS.ERROR -> {
-                    response.msg?.let { snackBar(root, it).show() }
+                is State.Error -> {
+                    snackBar(root, state.exception.toString()).show()
                     shimmer.visibility = View.VISIBLE
                     shimmer.startShimmer()
                     itemViewGroup.visibility = View.GONE
                 }
-                Resource.STATUS.EXCEPTION -> {
-                    response.msg?.let { snackBar(root, it).show() }
-                    shimmer.visibility = View.VISIBLE
-                    shimmer.startShimmer()
-                    itemViewGroup.visibility = View.GONE
-                }
-                Resource.STATUS.SUCCESS -> {
+                is State.Success -> {
                     shimmer.visibility = View.GONE
                     itemViewGroup.visibility = View.VISIBLE
-                    rvListTypes.setHasFixedSize(true)
-                    rvListTypes.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-                    rvListTypes.adapter = typesAdapter
-                    response.data?.result?.let { typesAdapter.addItem(it) }
-
-                    typesAdapter.typeItemClicked = {
-                        Intent(activity, CategoryActivity::class.java).apply {
-                            putExtra(CATEGORY_ID, it.id)
-                            putExtra(CATEGORY_NAME, it.jenis)
-                            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            startActivity(this)
+                    rvListTypes.apply {
+                        setHasFixedSize(true)
+                        animate().alpha(1f).duration = 1000L
+                        layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                        adapter = typesAdapter
+                        typesAdapter.addItem(state.data.result)
+                        typesAdapter.typeItemClicked = {
+                            Intent(activity, CategoryActivity::class.java).apply {
+                                putExtra(CATEGORY_ID, it.id)
+                                putExtra(CATEGORY_NAME, it.jenis)
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                                startActivity(this)
+                            }
                         }
                     }
                 }
+                else -> Unit
             }
         })
 
-        petViewModel.petData.observe(viewLifecycleOwner, { response ->
-            when (response.status) {
-                Resource.STATUS.LOADING -> {
+        petViewModel.petData.observe(viewLifecycleOwner, { state ->
+            when (state) {
+                is State.Loading -> {
                     shimmer.visibility = View.VISIBLE
                     shimmer.startShimmer()
                     itemViewGroup.visibility = View.GONE
                 }
-                Resource.STATUS.ERROR -> {
-                    response.msg?.let { snackBar(root, it).show() }
+                is State.Error -> {
+                    snackBar(root, state.exception.toString()).show()
                     shimmer.visibility = View.VISIBLE
                     shimmer.startShimmer()
                     itemViewGroup.visibility = View.GONE
                 }
-                Resource.STATUS.EXCEPTION -> {
-                    response.msg?.let { snackBar(root, it).show() }
-                    shimmer.visibility = View.VISIBLE
-                    shimmer.startShimmer()
-                    itemViewGroup.visibility = View.GONE
-                }
-                Resource.STATUS.SUCCESS -> {
+                is State.Success -> {
                     shimmer.visibility = View.GONE
                     itemViewGroup.visibility = View.VISIBLE
-                    rvItemPet.setHasFixedSize(true)
-                    rvItemPet.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-                    rvItemPet.adapter = petsAdapter
-                    response.data?.result?.let { petsAdapter.addItem(it) }
-
+                    rvItemPet.apply {
+                        animate().alpha(1f).duration = 1000L
+                        setHasFixedSize(true)
+                        layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+                        adapter = petsAdapter
+                    }
+                    petsAdapter.addItem(state.data.result)
                     petsAdapter.itemClickHelper = {
                         Intent(activity, DetailActivity::class.java).apply {
                             putExtra(PET_ID, it.id)
@@ -143,8 +138,21 @@ class HomeFragment : Fragment() {
                         }
                     }
                 }
+                else -> Unit
             }
         })
+    }
+
+    private fun observeNetwork() = with(binding) {
+        networkUtils.networkStatus.observe(viewLifecycleOwner) { isConnect ->
+            if (isConnect) {
+                shimmer.stopShimmer()
+                initView()
+            }else {
+                shimmer.startShimmer()
+                snackBar(root, getString(R.string.lost_network_text)).show()
+            }
+        }
     }
 
     override fun onResume() {

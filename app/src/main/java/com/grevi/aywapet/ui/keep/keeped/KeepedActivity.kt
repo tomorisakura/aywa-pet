@@ -13,8 +13,9 @@ import com.grevi.aywapet.ui.base.BaseActivity
 import com.grevi.aywapet.ui.viewmodel.KeepViewModel
 import com.grevi.aywapet.ui.viewmodel.PetViewModel
 import com.grevi.aywapet.utils.Constant.BASE_URL
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.NetworkUtils
 import com.grevi.aywapet.utils.SharedUtils
+import com.grevi.aywapet.utils.State
 import com.grevi.aywapet.utils.snackBar
 import java.util.*
 import javax.inject.Inject
@@ -24,7 +25,7 @@ class KeepedActivity : BaseActivity() {
     private lateinit var binding : ActivityKeepedBinding
     private val keepViewModel : KeepViewModel by viewModels()
     private val petViewModel : PetViewModel by viewModels()
-
+    private val networkUtils: NetworkUtils by lazy { NetworkUtils(this) }
     private var cbState : Boolean = false
 
     private val TAG = KeepedActivity::class.java.simpleName
@@ -38,7 +39,13 @@ class KeepedActivity : BaseActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.title = "Adopsi"
-        initView()
+        observeNetwork()
+    }
+
+    private fun observeNetwork() = with(binding) {
+        networkUtils.networkStatus.observe(this@KeepedActivity) { isConnect ->
+            if (isConnect) initView() else snackBar(root, getString(R.string.lost_network_text)).show()
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -48,13 +55,12 @@ class KeepedActivity : BaseActivity() {
 
     private fun initView() = with(binding) {
         val id = intent.getStringExtra("petId").toString()
-        petViewModel.getPet(id).observe(this@KeepedActivity, { response ->
-            when(response.status) {
-                Resource.STATUS.LOADING -> snackBar(root, response.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(root, response.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(root, response.msg!!).show()
-                Resource.STATUS.SUCCESS -> {
-                    response.data?.result?.let {pet ->
+        petViewModel.getPet(id).observe(this@KeepedActivity, { state ->
+            when(state) {
+                is State.Loading -> snackBar(root, state.msg).show()
+                is State.Error -> snackBar(root, state.exception.toString()).show()
+                is State.Success -> {
+                    state.data.result.let {pet ->
                         supportActionBar?.subtitle = pet.petName
                         Glide.with(this@KeepedActivity).load("$BASE_URL/${pet.pictures[0].picUrl}").placeholder(R.drawable.ic_image_placeholder).into(picPet)
                         petName.text = pet.petName
@@ -72,6 +78,7 @@ class KeepedActivity : BaseActivity() {
                     }
                 }
 
+                else -> Unit
             }
         })
         listOf(getString(R.string.terms1), getString(R.string.terms2), getString(R.string.terms3), getString(R.string.terms4)).apply {
@@ -94,18 +101,18 @@ class KeepedActivity : BaseActivity() {
             .setTitle("Keeped")
             .setMessage(msg)
             .setPositiveButton("Ok, OTW ") { dialog, _, ->
-                keepViewModel.keepPostData(id).observe(this, {response ->
-                    when(response.status) {
-                        Resource.STATUS.LOADING -> snackBar(binding.root, response.msg!!).show()
-                        Resource.STATUS.ERROR -> snackBar(binding.root, response.msg!!).show()
-                        Resource.STATUS.EXCEPTION -> snackBar(binding.root, response.msg!!).show()
-                        Resource.STATUS.SUCCESS -> {
+                keepViewModel.keepPostData(id).observe(this, {state ->
+                    when(state) {
+                        is State.Loading -> snackBar(binding.root, state.msg).show()
+                        is State.Error -> snackBar(binding.root, state.exception.toString()).show()
+                        is State.Success -> {
                             startService(Intent(this, TimerService::class.java))
                             Intent(this, SuccessActivity::class.java).apply {
                                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                                 startActivity(this)
                             }
                         }
+                        else -> Unit
                     }
                 })
             }

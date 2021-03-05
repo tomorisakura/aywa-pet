@@ -2,13 +2,13 @@ package com.grevi.aywapet.ui.detail
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
 import com.google.android.material.appbar.AppBarLayout
+import com.grevi.aywapet.R
 import com.grevi.aywapet.databinding.ActivityDetailBinding
 import com.grevi.aywapet.ui.base.BaseActivity
 import com.grevi.aywapet.ui.detail.adapter.PicturesAdapter
@@ -16,7 +16,8 @@ import com.grevi.aywapet.ui.keep.keeped.KeepedActivity
 import com.grevi.aywapet.ui.viewmodel.KeepViewModel
 import com.grevi.aywapet.ui.viewmodel.PetViewModel
 import com.grevi.aywapet.utils.Constant.PET_ID
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.NetworkUtils
+import com.grevi.aywapet.utils.State
 import com.grevi.aywapet.utils.snackBar
 
 class DetailActivity : BaseActivity() {
@@ -25,9 +26,10 @@ class DetailActivity : BaseActivity() {
     private val petViewModel : PetViewModel by viewModels()
     private val keepViewModel : KeepViewModel by viewModels()
 
-    private lateinit var picturesAdapter: PicturesAdapter
-    private lateinit var snapHelper: LinearSnapHelper
-    private lateinit var pagerSnapHelper: PagerSnapHelper
+    private val picturesAdapter: PicturesAdapter by lazy { PicturesAdapter() }
+    private val snapHelper: LinearSnapHelper by lazy { LinearSnapHelper() }
+    private val pagerSnapHelper: PagerSnapHelper by lazy { PagerSnapHelper() }
+    private val networkUtils : NetworkUtils by lazy { NetworkUtils(this) }
 
     private val TAG = DetailActivity::class.java.simpleName
 
@@ -36,7 +38,17 @@ class DetailActivity : BaseActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        initView()
+        observeNetwork()
+    }
+
+    private fun observeNetwork() = with(binding) {
+        networkUtils.networkStatus.observe(this@DetailActivity) { isConnect ->
+            if (isConnect) {
+                initView()
+            }else{
+                snackBar(root, getString(R.string.lost_network_text)).show()
+            }
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -45,11 +57,7 @@ class DetailActivity : BaseActivity() {
     }
 
     private fun initView() = with(binding) {
-        picturesAdapter = PicturesAdapter()
-        snapHelper = LinearSnapHelper()
-        pagerSnapHelper = PagerSnapHelper()
         val id = intent.getStringExtra(PET_ID).toString()
-
         appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
             when {
                 appBarLayout.totalScrollRange + verticalOffset == 0 -> supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -57,20 +65,18 @@ class DetailActivity : BaseActivity() {
             }
         })
 
-        petViewModel.getPet(id).observe(this@DetailActivity, { response ->
-            when(response.status) {
-                Resource.STATUS.LOADING -> {
+        petViewModel.getPet(id).observe(this@DetailActivity, { state ->
+            when(state) {
+                is State.Loading -> {
                     with(binding) {
                         appbar.visibility = View.GONE
                         btnAdopt.visibility = View.GONE
                         pgLoading.visibility = View.VISIBLE
                     }
                 }
-                Resource.STATUS.EXCEPTION -> Log.e(TAG, response.msg!!)
-                Resource.STATUS.ERROR -> snackBar(root, response.msg!!).show()
-                Resource.STATUS.SUCCESS -> {
-
-                    response.data?.result?.let { pet ->
+                is State.Error -> snackBar(root, state.exception.toString()).show()
+                is State.Success -> {
+                    state.data.result.let { pet ->
                         appbar.visibility = View.VISIBLE
                         pgLoading.visibility = View.GONE
                         groupView.visibility = View.VISIBLE
@@ -99,20 +105,20 @@ class DetailActivity : BaseActivity() {
                         }
                     }
                 }
+                else -> Unit
             }
         })
 
     }
 
     private fun observeChecker(pet : String) = with(binding) {
-        keepViewModel.keepData.observe(this@DetailActivity, {
-            when(it.status) {
-                Resource.STATUS.LOADING -> snackBar(root, it.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(root, it.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(root, it.msg!!).show()
-                Resource.STATUS.SUCCESS -> {
-                    it.data?.result.let { state ->
-                        if (state.isNullOrEmpty()) {
+        keepViewModel.keepData.observe(this@DetailActivity, { state ->
+            when(state) {
+                is State.Loading -> snackBar(root, state.msg).show()
+                is State.Error -> snackBar(root, state.exception.toString()).show()
+                is State.Success -> {
+                    state.data.result.let { keep ->
+                        if (keep.isNullOrEmpty()) {
                             Intent(this@DetailActivity, KeepedActivity::class.java).apply {
                                 putExtra(PET_ID, pet)
                                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -123,6 +129,7 @@ class DetailActivity : BaseActivity() {
                         }
                     }
                 }
+                else -> Unit
             }
         })
     }

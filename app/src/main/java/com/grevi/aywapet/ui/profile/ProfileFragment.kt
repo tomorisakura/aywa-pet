@@ -15,7 +15,7 @@ import com.grevi.aywapet.databinding.FragmentProfileBinding
 import com.grevi.aywapet.ui.profile.adapter.KeepSuccessAdapter
 import com.grevi.aywapet.ui.viewmodel.KeepViewModel
 import com.grevi.aywapet.ui.viewmodel.ProfileViewModel
-import com.grevi.aywapet.utils.Resource
+import com.grevi.aywapet.utils.NetworkUtils
 import com.grevi.aywapet.utils.State
 import com.grevi.aywapet.utils.snackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,6 +28,7 @@ class ProfileFragment : Fragment() {
     private val profileViewModel : ProfileViewModel by viewModels()
     private val keepViewModel : KeepViewModel by viewModels()
     private lateinit var keepSuccessAdapter: KeepSuccessAdapter
+    private val networkUtils: NetworkUtils by lazy { NetworkUtils(requireContext()) }
 
     private val TAG = ProfileFragment::class.java.simpleName
 
@@ -50,6 +51,7 @@ class ProfileFragment : Fragment() {
         super.onPrepareOptionsMenu(menu)
         menu.findItem(R.id.notif).isVisible = false
         menu.findItem(R.id.edit_account).isVisible = true
+        menu.findItem(R.id.search).isVisible = false
     }
 
     private fun initView() = with(binding) {
@@ -70,21 +72,25 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        keepViewModel.keepSuccessData.observe(viewLifecycleOwner, { resp ->
-            when(resp.status) {
-                Resource.STATUS.LOADING -> snackBar(root, resp.msg!!).show()
-                Resource.STATUS.EXCEPTION -> snackBar(root, resp.msg!!).show()
-                Resource.STATUS.ERROR -> snackBar(root, resp.msg!!).show()
-                Resource.STATUS.SUCCESS -> {
-                    resp.data?.result?.let {
-                        keepSuccessAdapter = KeepSuccessAdapter(it)
-                        rvListKeepStatus.setHasFixedSize(true)
-                        rvListKeepStatus.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
-                        rvListKeepStatus.adapter = keepSuccessAdapter
+        networkUtils.networkStatus.observe(viewLifecycleOwner) { isConnect ->
+            if (isConnect) {
+                keepViewModel.keepSuccessData.observe(viewLifecycleOwner, { state ->
+                    when(state) {
+                        is State.Loading -> snackBar(root, state.msg).show()
+                        is State.Error -> snackBar(root, state.exception.toString()).show()
+                        is State.Success -> {
+                            keepSuccessAdapter = KeepSuccessAdapter(state.data.result)
+                            rvListKeepStatus.setHasFixedSize(true)
+                            rvListKeepStatus.layoutManager = GridLayoutManager(requireContext(), 2, GridLayoutManager.VERTICAL, false)
+                            rvListKeepStatus.adapter = keepSuccessAdapter
+                        }
+                        else -> Unit
                     }
-                }
+                })
+            }else {
+                snackBar(root, getString(R.string.lost_network_text)).show()
             }
-        })
 
+        }
     }
 }

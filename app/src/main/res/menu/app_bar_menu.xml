@@ -10,4 +10,9 @@
         android:icon="@drawable/ic_twotone_manage_accounts_24"
         android:title="Manage Akun"
         app:showAsAction="always"/>
+
+    <item android:id="@+id/search"
+        android:icon="@drawable/ic_twotone_search_24"
+        android:title="Search"
+        app:showAsAction="always"/>
 </menu>
